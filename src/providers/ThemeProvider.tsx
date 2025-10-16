@@ -4,7 +4,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {View, useColorScheme} from 'react-native';
+import {View, useColorScheme, Appearance} from 'react-native';
 import {usePrefsStore} from '@state/usePrefsStore';
 
 type ThemeProviderProps = {
@@ -17,6 +17,9 @@ type ThemeProviderProps = {
  * Wraps the app and applies the global color scheme for NativeWind dark mode.
  * Listens to theme changes from usePrefsStore and propagates to all child components.
  * 
+ * Uses React Native's Appearance API to set the color scheme globally,
+ * which makes NativeWind's dark: classes work properly.
+ * 
  * @example
  * <ThemeProvider>
  *   <App />
@@ -24,15 +27,20 @@ type ThemeProviderProps = {
  */
 export function ThemeProvider({children}: ThemeProviderProps) {
   const theme = usePrefsStore(state => state.theme);
-  const systemColorScheme = useColorScheme();
 
-  // Use user preference, fallback to system preference
-  const activeColorScheme = theme || systemColorScheme || 'light';
+  // Set the color scheme globally using React Native's Appearance API
+  // This makes NativeWind's dark: classes work properly
+  useEffect(() => {
+    // Force the appearance to match our theme setting
+    Appearance.setColorScheme(theme);
+  }, [theme]);
 
   return (
     <View
       style={{flex: 1}}
-      className={activeColorScheme === 'dark' ? 'dark' : ''}>
+      // Apply colorScheme to this View for NativeWind
+      // @ts-ignore - colorScheme exists but TypeScript doesn't know about it
+      colorScheme={theme}>
       {children}
     </View>
   );
