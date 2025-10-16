@@ -87,6 +87,9 @@ export default {
     // Buttons
     upgrade_button: 'Pro Sürüme Geç',
     cancel: 'Belki Sonra',
+    login_required: 'Giriş Gerekli',
+    login_message: 'Pro plana geçmek için lütfen giriş yapın',
+    login_button: 'Giriş Yap',
 
     // Legacy translations (keep for backwards compatibility)
     limitReached: 'Aylık Limite Ulaşıldı',

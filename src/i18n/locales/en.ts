@@ -87,6 +87,9 @@ export default {
     // Buttons
     upgrade_button: 'Upgrade to Pro',
     cancel: 'Maybe Later',
+    login_required: 'Login Required',
+    login_message: 'Please login to upgrade to Pro plan',
+    login_button: 'Login',
 
     // Legacy translations (keep for backwards compatibility)
     limitReached: 'Monthly Limit Reached',

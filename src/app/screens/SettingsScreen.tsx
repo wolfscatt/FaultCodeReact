@@ -183,6 +183,15 @@ export default function SettingsScreen() {
             <Text style={styles.planButtonText}>Downgrade to Free (Demo)</Text>
           </TouchableOpacity>
         )}
+        {plan === 'free' && (
+          <TouchableOpacity 
+            style={[styles.planButton, styles.upgradeButton]} 
+            onPress={() => navigation.navigate('Paywall')}>
+            <Text style={[styles.planButtonText, styles.upgradeButtonText]}>
+              ✨ Upgrade to Pro
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* App Info */}
@@ -221,6 +230,12 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.base,
     fontWeight: typography.weights.semibold,
     color: colors.gray[700],
+  },
+  upgradeButton: {
+    backgroundColor: colors.primary[600],
+  },
+  upgradeButtonText: {
+    color: '#ffffff',
   },
   appInfo: {
     alignItems: 'center',

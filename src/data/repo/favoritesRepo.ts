@@ -28,6 +28,12 @@ export async function addFavorite(
   faultCodeId: string,
 ): Promise<{success: boolean; error: any}> {
   try {
+    // Check if this is mock data (non-UUID format)
+    if (!faultCodeId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      console.warn('Mock data detected - favorites not persisted to Supabase');
+      return {success: true, error: null}; // Mock success for development
+    }
+
     const {error} = await supabase.from('favorites').insert({
       user_id: userId,
       fault_code_id: faultCodeId,
@@ -60,6 +66,12 @@ export async function removeFavorite(
   faultCodeId: string,
 ): Promise<{success: boolean; error: any}> {
   try {
+    // Check if this is mock data (non-UUID format)
+    if (!faultCodeId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      console.warn('Mock data detected - favorites not persisted to Supabase');
+      return {success: true, error: null}; // Mock success for development
+    }
+
     const {error} = await supabase
       .from('favorites')
       .delete()
@@ -160,6 +172,12 @@ export async function isFavorited(
   faultCodeId: string,
 ): Promise<{isFavorited: boolean; error: any}> {
   try {
+    // Check if this is mock data (non-UUID format)
+    if (!faultCodeId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      console.warn('Mock data detected - returning false for favorites check');
+      return {isFavorited: false, error: null}; // Mock data not favorited
+    }
+
     const {data, error} = await supabase
       .from('favorites')
       .select('id')

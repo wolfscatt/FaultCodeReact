@@ -15,7 +15,7 @@ type Props = RootStackScreenProps<'Paywall'>;
 
 export default function PaywallScreen({navigation}: Props) {
   const {t} = useTranslation();
-  const {plan, upgradeToPro} = useUserStore();
+  const {plan, upgradeToPro, isLoggedIn} = useUserStore();
   const {remaining, limit} = useCanAccessContent();
 
   // Log paywall shown event on mount
@@ -24,6 +24,22 @@ export default function PaywallScreen({navigation}: Props) {
   }, [remaining]);
 
   const handleSubscribe = () => {
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      Alert.alert(
+        t('paywall.login_required', 'Login Required'),
+        t('paywall.login_message', 'Please login to upgrade to Pro plan'),
+        [
+          {text: t('common.cancel', 'Cancel'), style: 'cancel'},
+          {
+            text: t('paywall.login_button', 'Login'),
+            onPress: () => navigation.navigate('Login'),
+          },
+        ],
+      );
+      return;
+    }
+
     // Log upgrade click
     analytics.upgradeClick('paywall', plan);
     
@@ -45,7 +61,6 @@ export default function PaywallScreen({navigation}: Props) {
     t('paywall.freeFeatures.0', {limit}),
     t('paywall.freeFeatures.1'),
     t('paywall.freeFeatures.2'),
-    t('paywall.freeFeatures.3'),
   ];
 
   const proFeatures = [
@@ -126,7 +141,7 @@ export default function PaywallScreen({navigation}: Props) {
       {plan === 'free' && (
         <View style={styles.quotaInfo}>
           <Text style={styles.quotaInfoText}>
-            {t('paywall.remainingToday', {remaining, limit})}
+            {t('paywall.remainingThisMonth', {remaining, limit})}
           </Text>
         </View>
       )}

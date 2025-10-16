@@ -20,6 +20,7 @@ export type RootStackParamList = {
 // Main Bottom Tabs
 export type MainTabsParamList = {
   SearchTab: undefined;
+  FavoritesTab: undefined;
   SettingsTab: undefined;
 };
 
