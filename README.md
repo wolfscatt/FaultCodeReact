@@ -114,6 +114,10 @@ FaultCode/
 │   └── utils/                  # Utilities
 │       └── index.ts            # Helpers (debounce, delay, etc.)
 │
+├── scripts/                    # Database & deployment scripts
+│   ├── setupSupabaseTables.sql # Bilingual Supabase schema
+│   └── README.md               # Database setup guide
+│
 ├── App.tsx                     # Root component
 ├── index.js                    # RN entry point
 ├── package.json                # Dependencies (exact versions)
@@ -288,9 +292,15 @@ When ready to migrate from mock data to Supabase, update only the repository fil
 
 **Prerequisites**:
 1. Create a Supabase project at https://app.supabase.com
-2. Set up your database tables (brands, models, fault_codes, steps)
+2. Run the database schema: `scripts/setupSupabaseTables.sql` (see `scripts/README.md` for details)
 3. Add your credentials to `.env` file
-4. Update repository implementations
+4. Migrate mock data to Supabase (optional helper scripts coming soon)
+5. Update repository implementations
+
+**Database Schema**: The app includes a complete bilingual SQL schema in `scripts/setupSupabaseTables.sql` with:
+- JSONB columns for English/Turkish content
+- 7 core tables: brands, boiler_models, fault_codes, resolution_steps, plans, users, analytics_events
+- Optimized indexes, foreign keys, and Row Level Security policies
 
 **Step 1: Update Repository Implementation**
 ```typescript
