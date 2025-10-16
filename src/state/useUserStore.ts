@@ -22,10 +22,10 @@ type UserState = {
   plan: PlanType;
   planId: string | null;
 
-  // Usage tracking (for free tier limits)
-  dailyQuotaUsed: number;
-  dailyQuotaLimit: number;
-  lastResetDate: string; // ISO date string
+  // Usage tracking (for free tier limits) - MONTHLY QUOTA
+  monthlyQuotaUsed: number;
+  monthlyQuotaLimit: number;
+  quotaResetDate: string; // ISO date string - when quota will reset
 
   // Loading states
   isLoading: boolean;
@@ -40,11 +40,14 @@ type UserState = {
   upgradeToPro: () => Promise<void>;
   downgradeToFree: () => void;
   incrementQuota: () => Promise<void>;
-  resetDailyQuota: () => void;
+  resetMonthlyQuota: () => void;
   checkAndResetQuota: () => void;
+  isPremium: () => boolean;
+  canAccessFavorites: () => boolean;
+  canViewFault: () => boolean;
 };
 
-const DAILY_FREE_LIMIT = 10;
+const MONTHLY_FREE_LIMIT = 10;
 
 /**
  * User store with subscription and quota management
@@ -60,9 +63,13 @@ export const useUserStore = create<UserState>()(
     email: null,
     plan: 'free',
     planId: null,
-    dailyQuotaUsed: 0,
-    dailyQuotaLimit: DAILY_FREE_LIMIT,
-    lastResetDate: new Date().toISOString().split('T')[0],
+    monthlyQuotaUsed: 0,
+    monthlyQuotaLimit: MONTHLY_FREE_LIMIT,
+    quotaResetDate: (() => {
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      return nextMonth.toISOString().split('T')[0];
+    })(),
     isLoading: false,
     isInitialized: false,
 
@@ -223,10 +230,10 @@ export const useUserStore = create<UserState>()(
         set(state => {
           state.plan = data.plan_name;
           state.planId = data.plan_id;
-          state.dailyQuotaUsed = data.daily_quota_used;
-          state.lastResetDate = data.last_quota_reset_date;
+          state.monthlyQuotaUsed = data.monthly_quota_used;
+          state.quotaResetDate = data.quota_reset_date;
           // Pro users have unlimited quota
-          state.dailyQuotaLimit = data.plan_name === 'pro' ? Infinity : DAILY_FREE_LIMIT;
+          state.monthlyQuotaLimit = data.plan_name === 'pro' ? Infinity : MONTHLY_FREE_LIMIT;
         });
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -243,8 +250,11 @@ export const useUserStore = create<UserState>()(
         state.email = null;
         state.plan = 'free';
         state.planId = null;
-        state.dailyQuotaUsed = 0;
-        state.dailyQuotaLimit = DAILY_FREE_LIMIT;
+        state.monthlyQuotaUsed = 0;
+        state.monthlyQuotaLimit = MONTHLY_FREE_LIMIT;
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        state.quotaResetDate = nextMonth.toISOString().split('T')[0];
       });
     },
 
@@ -267,8 +277,11 @@ export const useUserStore = create<UserState>()(
     downgradeToFree: () =>
       set(state => {
         state.plan = 'free';
-        state.dailyQuotaUsed = 0;
-        state.dailyQuotaLimit = DAILY_FREE_LIMIT;
+        state.monthlyQuotaUsed = 0;
+        state.monthlyQuotaLimit = MONTHLY_FREE_LIMIT;
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        state.quotaResetDate = nextMonth.toISOString().split('T')[0];
       }),
 
     // Increment usage counter (calls Supabase)
@@ -277,7 +290,7 @@ export const useUserStore = create<UserState>()(
       if (!userId) {
         // If not logged in, just increment locally
         set(state => {
-          state.dailyQuotaUsed += 1;
+          state.monthlyQuotaUsed += 1;
         });
         return;
       }
@@ -286,56 +299,82 @@ export const useUserStore = create<UserState>()(
         const {success} = await AuthService.incrementUserQuota(userId);
         if (success) {
           set(state => {
-            state.dailyQuotaUsed += 1;
+            state.monthlyQuotaUsed += 1;
           });
         }
       } catch (error) {
         console.error('Error incrementing quota:', error);
         // Still increment locally even if API fails
         set(state => {
-          state.dailyQuotaUsed += 1;
+          state.monthlyQuotaUsed += 1;
         });
       }
     },
 
-    // Reset daily quota manually
-    resetDailyQuota: () =>
+    // Reset monthly quota manually
+    resetMonthlyQuota: () =>
       set(state => {
-        state.dailyQuotaUsed = 0;
-        state.lastResetDate = new Date().toISOString().split('T')[0];
+        state.monthlyQuotaUsed = 0;
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        state.quotaResetDate = nextMonth.toISOString().split('T')[0];
       }),
 
-    // Check if quota needs reset (new day) and reset if needed
+    // Check if quota needs reset (new month) and reset if needed
     checkAndResetQuota: () =>
       set(state => {
-        const today = new Date().toISOString().split('T')[0];
-        if (state.lastResetDate !== today) {
-          state.dailyQuotaUsed = 0;
-          state.lastResetDate = today;
+        const today = new Date();
+        const resetDate = new Date(state.quotaResetDate);
+        if (resetDate <= today) {
+          state.monthlyQuotaUsed = 0;
+          const nextMonth = new Date();
+          nextMonth.setMonth(nextMonth.getMonth() + 1);
+          state.quotaResetDate = nextMonth.toISOString().split('T')[0];
         }
       }),
+
+    // Check if user is premium
+    isPremium: () => {
+      return get().plan === 'pro';
+    },
+
+    // Check if user can access favorites (premium-only)
+    canAccessFavorites: () => {
+      return get().plan === 'pro';
+    },
+
+    // Check if user can view a fault (based on quota)
+    canViewFault: () => {
+      const state = get();
+      // Pro users always have access
+      if (state.plan === 'pro') {
+        return true;
+      }
+      // Free users check quota
+      return state.monthlyQuotaUsed < state.monthlyQuotaLimit;
+    },
   })),
 );
 
 /**
  * Utility function to check if user can access fault details
  * @param plan - User's subscription plan ('free' or 'pro')
- * @param dailyQuotaUsed - Number of faults viewed today
- * @param dailyQuotaLimit - Maximum faults allowed per day for free users
+ * @param monthlyQuotaUsed - Number of faults viewed this month
+ * @param monthlyQuotaLimit - Maximum faults allowed per month for free users
  * @returns boolean - true if user can access more content
  */
 export const canAccessFaultDetail = (
   plan: PlanType,
-  dailyQuotaUsed: number,
-  dailyQuotaLimit: number,
+  monthlyQuotaUsed: number,
+  monthlyQuotaLimit: number,
 ): boolean => {
   // Pro users have unlimited access
   if (plan === 'pro') {
     return true;
   }
 
-  // Free users are limited by daily quota
-  return dailyQuotaUsed < dailyQuotaLimit;
+  // Free users are limited by monthly quota
+  return monthlyQuotaUsed < monthlyQuotaLimit;
 };
 
 /**
@@ -345,23 +384,26 @@ export const useCanAccessContent = (): {
   canAccess: boolean;
   remaining: number;
   limit: number;
+  isPremium: boolean;
 } => {
-  const {plan, dailyQuotaUsed, dailyQuotaLimit} = useUserStore();
+  const {plan, monthlyQuotaUsed, monthlyQuotaLimit} = useUserStore();
 
-  const canAccess = canAccessFaultDetail(plan, dailyQuotaUsed, dailyQuotaLimit);
+  const canAccess = canAccessFaultDetail(plan, monthlyQuotaUsed, monthlyQuotaLimit);
 
   if (plan === 'pro') {
     return {
       canAccess: true,
       remaining: Infinity,
       limit: Infinity,
+      isPremium: true,
     };
   }
 
   return {
     canAccess,
-    remaining: Math.max(0, dailyQuotaLimit - dailyQuotaUsed),
-    limit: dailyQuotaLimit,
+    remaining: Math.max(0, monthlyQuotaLimit - monthlyQuotaUsed),
+    limit: monthlyQuotaLimit,
+    isPremium: false,
   };
 };
 

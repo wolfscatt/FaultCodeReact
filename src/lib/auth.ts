@@ -17,8 +17,8 @@ export type UserData = {
   id: string;
   plan_id: string;
   plan_name: 'free' | 'pro';
-  daily_quota_used: number;
-  last_quota_reset_date: string;
+  monthly_quota_used: number;
+  quota_reset_date: string;
   preferences: {
     language?: 'en' | 'tr';
     theme?: 'light' | 'dark';
@@ -134,8 +134,8 @@ export const getUserData = async (
         `
         id,
         plan_id,
-        daily_quota_used,
-        last_quota_reset_date,
+        monthly_quota_used,
+        quota_reset_date,
         preferences,
         plans!inner(name)
       `,
@@ -152,8 +152,8 @@ export const getUserData = async (
       id: data.id,
       plan_id: data.plan_id,
       plan_name: (data.plans as any).name as 'free' | 'pro',
-      daily_quota_used: data.daily_quota_used,
-      last_quota_reset_date: data.last_quota_reset_date,
+      monthly_quota_used: data.monthly_quota_used,
+      quota_reset_date: data.quota_reset_date,
       preferences: data.preferences || {},
     };
 
@@ -191,13 +191,17 @@ export const createUserRecord = async (
       };
     }
 
+    // Calculate next month's reset date
+    const resetDate = new Date();
+    resetDate.setMonth(resetDate.getMonth() + 1);
+    
     // Create user record using admin client (bypasses RLS)
     const {error} = await supabaseAdmin.from('users').insert({
       id: userId,
       email: email,
       plan_id: freePlan.id,
-      daily_quota_used: 0,
-      last_quota_reset_date: new Date().toISOString().split('T')[0],
+      monthly_quota_used: 0,
+      quota_reset_date: resetDate.toISOString().split('T')[0],
       preferences: {
         language: 'en',
         theme: 'light',
@@ -217,13 +221,13 @@ export const createUserRecord = async (
 };
 
 /**
- * Update user's daily quota
+ * Update user's monthly quota
  */
 export const incrementUserQuota = async (
   userId: string,
 ): Promise<{success: boolean; error: any}> => {
   try {
-    const {error} = await supabase.rpc('increment_user_quota', {
+    const {error} = await supabase.rpc('increment_monthly_quota', {
       user_id: userId,
     });
 
@@ -235,6 +239,31 @@ export const incrementUserQuota = async (
   } catch (error) {
     console.error('Error incrementing quota:', error);
     return {success: false, error};
+  }
+};
+
+/**
+ * Check if user can access fault details
+ * @param userId - User ID
+ * @returns True if user can view fault details (based on plan and quota)
+ */
+export const canAccessFaultDetail = async (
+  userId: string,
+): Promise<{canAccess: boolean; error: any}> => {
+  try {
+    const {data, error} = await supabase.rpc('can_access_fault_detail', {
+      user_id: userId,
+    });
+
+    if (error) {
+      console.error('Error checking access:', error);
+      return {canAccess: false, error};
+    }
+
+    return {canAccess: !!data, error: null};
+  } catch (error) {
+    console.error('Error checking access:', error);
+    return {canAccess: false, error};
   }
 };
 

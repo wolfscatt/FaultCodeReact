@@ -53,35 +53,84 @@ export default {
   },
 
   paywall: {
+    // Titles
     title: 'Pro Sürüme Geçin',
-    limitReached: 'Günlük Limite Ulaşıldı',
-    limitReachedDesc: 'Günlük {{limit}} arıza kodu görüntüleme limitinize ulaştınız.',
+    quota_exceeded_title: 'Aylık Limite Ulaşıldı',
+    favorites_locked_title: 'Favoriler Sadece Premium İçin',
+    premium_title: 'Premium\'a Geçin',
+
+    // Messages
+    quota_exceeded_message: 'Bu ay 10 arıza detayı görüntüleme limitinize ulaştınız. Sınırsız erişim için Pro sürüme geçin.',
+    favorites_locked_message: 'Favori arıza kodlarınızı hızlı erişim için kaydedin. Pro planla kullanılabilir.',
+    premium_message: 'Tüm özelliklerin kilidini açın ve arıza kodlarına sınırsız erişim kazanın.',
+
+    // Features
+    feature_unlimited: 'Sınırsız arıza detayı',
+    feature_favorites: 'Favorilere kaydet',
+    feature_advanced_search: 'Gelişmiş arama',
+    feature_priority_support: 'Öncelikli destek',
+    feature_offline: 'Çevrimdışı erişim',
+    feature_images: 'Görsel rehberler',
+
+    // Comparison table
+    feature: 'Özellik',
+    free: 'Ücretsiz',
+    pro: 'Pro',
+    fault_details: 'Arıza Detayları',
+    limit_10: '10/ay',
+    unlimited: 'Sınırsız',
+    favorites: 'Favoriler',
+    support: 'Destek',
+    basic: 'Temel',
+    priority: 'Öncelikli',
+
+    // Buttons
+    upgrade_button: 'Pro Sürüme Geç',
+    cancel: 'Belki Sonra',
+
+    // Legacy translations (keep for backwards compatibility)
+    limitReached: 'Aylık Limite Ulaşıldı',
+    limitReachedDesc: 'Aylık {{limit}} arıza kodu görüntüleme limitinize ulaştınız.',
     freePlan: 'Ücretsiz Plan',
     proPlan: 'Pro Plan',
     freeFeatures: [
-      'Günde {{limit}} arıza kodu',
+      'Ayda 10 arıza kodu',
       'Temel arama',
-      'Çözüm adımları',
-      'Güvenlik uyarıları',
+      'Topluluk desteği',
     ],
     proFeatures: [
       'Sınırsız arıza kodu',
-      'Gelişmiş arama filtreleri',
-      'Çevrimdışı erişim',
+      'Favorilere kaydet',
+      'Gelişmiş arama',
       'Öncelikli destek',
-      'Reklamsız deneyim',
-      'Favorilere ekle',
+      'Çevrimdışı erişim',
+      'Görsel rehberler',
     ],
     subscribe: 'Pro Aboneliği Al',
     mockNotice: '(Deneme aboneliği - ücret alınmayacak)',
-    remainingToday: 'Bugün kalan: {{remaining}}/{{limit}}',
+    remainingThisMonth: 'Bu ay kalan: {{remaining}}/{{limit}}',
     unlimitedAccess: 'Sınırsız erişim',
+  },
+
+  favorites: {
+    title: 'Favoriler',
+    empty_title: 'Henüz Favori Yok',
+    empty_message: 'Daha sonra hızlı erişim için yararlı bulduğunuz arıza kodlarını kaydedin.',
+    saved: 'kayıtlı',
+    remove_title: 'Favoriyi Kaldır',
+    remove_message: 'Bu favorinizden kaldırmak istediğinizden emin misiniz?',
+    remove: 'Kaldır',
+    view: 'Detayları Görüntüle',
+    add_success: 'Favorilere eklendi',
+    remove_success: 'Favorilerden kaldırıldı',
+    error: 'Favoriler güncellenemedi',
   },
 
   navigation: {
     home: 'Ana Sayfa',
     search: 'Ara',
     bookmarks: 'Yer İmleri',
+    favorites: 'Favoriler',
     settings: 'Ayarlar',
   },
 
