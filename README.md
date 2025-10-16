@@ -544,14 +544,15 @@ When ready to switch from mock data to a real backend:
 
 ## 🔄 CI/CD
 
-This project uses GitHub Actions for continuous integration:
+This project uses GitHub Actions for continuous integration with **full Supabase support**:
 
 - **Automated Testing**: Runs on every push and pull request
 - **Type Checking**: TypeScript compilation check
 - **Linting**: ESLint + Prettier checks
-- **Test Suite**: Jest tests with coverage reporting
+- **Test Suite**: Jest tests with coverage reporting (uses mocks, no network calls)
 - **Node Version**: 18.x
 - **Caching**: Yarn dependencies cached for faster builds
+- **Supabase Integration**: Tests work with or without Supabase credentials
 
 ### Workflow Steps
 
@@ -575,6 +576,20 @@ yarn test        # Run tests with coverage
 ### CI Badge
 
 The CI badge at the top of this README shows the current build status. Click it to see detailed workflow runs.
+
+### GitHub Actions Secrets (Optional)
+
+Tests use mocks by default and don't require Supabase credentials. However, if you want to test against a real Supabase instance in CI:
+
+1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+2. Add these optional secrets:
+   - `SUPABASE_URL` - Your Supabase project URL
+   - `SUPABASE_ANON_KEY` - Your Supabase anonymous key  
+   - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (for backend scripts)
+
+**Note**: These are completely optional. The CI pipeline will use mock data if secrets are not configured.
+
+See [`GITHUB_ACTIONS_SETUP.md`](./GITHUB_ACTIONS_SETUP.md) for detailed setup instructions.
 
 ## 🔧 Troubleshooting
 
