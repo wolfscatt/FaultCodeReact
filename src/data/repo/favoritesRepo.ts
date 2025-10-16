@@ -5,6 +5,7 @@
 
 import {supabase} from '@lib/supabase';
 import {FaultCode} from '../types';
+import {usePrefsStore} from '@state/usePrefsStore';
 
 export type Favorite = {
   id: string;
@@ -16,6 +17,38 @@ export type Favorite = {
 export type FavoriteWithFault = Favorite & {
   faultCode: FaultCode;
 };
+
+// Supabase fault code type (with JSONB fields)
+type SupabaseFaultCode = {
+  id: string;
+  brand_id: string;
+  code: string;
+  title: {en: string; tr: string};
+  severity: 'info' | 'warning' | 'critical';
+  summary: {en: string; tr: string};
+  causes: {en: string[]; tr: string[]};
+  safety_notice: {en: string; tr: string} | null;
+  last_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Converts Supabase fault code to app FaultCode type
+ */
+function convertSupabaseFault(sf: SupabaseFaultCode, language: 'en' | 'tr'): FaultCode {
+  return {
+    id: sf.id,
+    brandId: sf.brand_id,
+    code: sf.code,
+    title: sf.title[language] || sf.title.en,
+    severity: sf.severity,
+    summary: sf.summary[language] || sf.summary.en,
+    causes: sf.causes[language] || sf.causes.en,
+    safetyNotice: sf.safety_notice?.[language] || sf.safety_notice?.en || undefined,
+    lastVerifiedAt: sf.last_verified_at || undefined,
+  };
+}
 
 /**
  * Add a fault code to favorites
@@ -110,7 +143,6 @@ export async function getUserFavorites(
         fault_codes (
           id,
           brand_id,
-          boiler_model_id,
           code,
           title,
           severity,
@@ -131,6 +163,9 @@ export async function getUserFavorites(
       return {data: [], error};
     }
 
+    // Get current language
+    const language = usePrefsStore.getState().language;
+
     // Transform the data to match our types
     const favorites: FavoriteWithFault[] =
       data?.map((item: any) => ({
@@ -138,20 +173,7 @@ export async function getUserFavorites(
         userId: item.user_id,
         faultCodeId: item.fault_code_id,
         createdAt: item.created_at,
-        faultCode: {
-          id: item.fault_codes.id,
-          brandId: item.fault_codes.brand_id,
-          boilerModelId: item.fault_codes.boiler_model_id,
-          code: item.fault_codes.code,
-          title: item.fault_codes.title,
-          severity: item.fault_codes.severity,
-          summary: item.fault_codes.summary,
-          causes: item.fault_codes.causes,
-          safetyNotice: item.fault_codes.safety_notice,
-          lastVerifiedAt: item.fault_codes.last_verified_at,
-          createdAt: item.fault_codes.created_at,
-          updatedAt: item.fault_codes.updated_at,
-        },
+        faultCode: convertSupabaseFault(item.fault_codes as SupabaseFaultCode, language),
       })) || [];
 
     return {data: favorites, error: null};
