@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import {render, fireEvent, waitFor, act} from '@testing-library/react-native';
 import SettingsScreen from '../SettingsScreen';
 import {usePrefsStore} from '@state/usePrefsStore';
 import {useUserStore} from '@state/useUserStore';
