@@ -1,0 +1,775 @@
+[
+  {
+    "id": "fault_001",
+    "brandId": "brand_001",
+    "code": "F28",
+    "title": "Ignition failure - boiler fails to ignite",
+    "severity": "critical",
+    "summary": "The boiler has attempted to ignite but has failed three times in succession. This is a common fault that prevents the boiler from heating.",
+    "causes": [
+      "Gas supply issue or gas valve closed",
+      "Faulty ignition electrode",
+      "Air in gas line",
+      "Low gas pressure",
+      "Blocked flue or condensate pipe"
+    ],
+    "safetyNotice": "If you smell gas, turn off the gas supply immediately and call a Gas Safe registered engineer.",
+    "lastVerifiedAt": "2023-09-15"
+  },
+  {
+    "id": "fault_002",
+    "brandId": "brand_001",
+    "code": "F22",
+    "title": "Low water pressure",
+    "severity": "warning",
+    "summary": "The system water pressure has dropped below the minimum required level (typically below 0.5 bar). The boiler will not operate until pressure is restored.",
+    "causes": [
+      "Water leak in the system",
+      "Recently bled radiators without topping up",
+      "Faulty pressure relief valve",
+      "Expansion vessel failure"
+    ],
+    "lastVerifiedAt": "2023-09-20"
+  },
+  {
+    "id": "fault_003",
+    "brandId": "brand_001",
+    "code": "F75",
+    "title": "Pump pressure fault",
+    "severity": "warning",
+    "summary": "The pump is not detecting adequate pressure difference. This may indicate a pump issue or blockage in the system.",
+    "causes": [
+      "Blocked pump or stuck impeller",
+      "Air lock in the pump",
+      "Faulty pump",
+      "Blocked heat exchanger"
+    ],
+    "lastVerifiedAt": "2023-08-12"
+  },
+  {
+    "id": "fault_004",
+    "brandId": "brand_002",
+    "code": "EA",
+    "title": "Flame sensing failure",
+    "severity": "critical",
+    "summary": "The boiler has ignited but the flame is not being detected by the flame sensor. This causes the boiler to shut down as a safety precaution.",
+    "causes": [
+      "Dirty or faulty flame sensor",
+      "Incorrect gas/air ratio",
+      "Faulty PCB",
+      "Poor electrical connection"
+    ],
+    "safetyNotice": "This is a safety-critical fault. Do not attempt to bypass. Contact a qualified engineer.",
+    "lastVerifiedAt": "2023-09-10"
+  },
+  {
+    "id": "fault_005",
+    "brandId": "brand_002",
+    "code": "E9",
+    "title": "Overheat thermostat operated",
+    "severity": "critical",
+    "summary": "The overheat thermostat has activated, indicating the boiler temperature exceeded safe limits. This is a safety shutdown.",
+    "causes": [
+      "Pump failure or stuck pump",
+      "System blockage or sludge",
+      "Faulty overheat thermostat",
+      "Low system water flow"
+    ],
+    "safetyNotice": "Allow the boiler to cool completely before attempting reset. If fault persists, call an engineer.",
+    "lastVerifiedAt": "2023-09-05"
+  },
+  {
+    "id": "fault_006",
+    "brandId": "brand_002",
+    "code": "D5",
+    "title": "Internal control fault",
+    "severity": "warning",
+    "summary": "The boiler's internal control system has detected an error. This may require PCB diagnostics.",
+    "causes": [
+      "Faulty printed circuit board (PCB)",
+      "Voltage fluctuation or power surge",
+      "Loose electrical connections",
+      "Software glitch"
+    ],
+    "lastVerifiedAt": "2023-08-20"
+  },
+  {
+    "id": "fault_007",
+    "brandId": "brand_003",
+    "code": "E133",
+    "title": "Gas valve fault",
+    "severity": "critical",
+    "summary": "The gas valve is not responding correctly to control signals. The boiler cannot safely operate.",
+    "causes": [
+      "Faulty gas valve",
+      "Wiring issue to gas valve",
+      "PCB fault",
+      "Insufficient power supply"
+    ],
+    "safetyNotice": "Do not attempt to force the gas valve open. Contact a Gas Safe registered engineer.",
+    "lastVerifiedAt": "2023-09-18"
+  },
+  {
+    "id": "fault_008",
+    "brandId": "brand_003",
+    "code": "E117",
+    "title": "Low system pressure",
+    "severity": "warning",
+    "summary": "The system pressure is too low for safe operation. Similar to other low pressure faults.",
+    "causes": [
+      "Water leak in the system",
+      "Pressure relief valve leaking",
+      "Expansion vessel requires recharging",
+      "Pressure sensor fault"
+    ],
+    "lastVerifiedAt": "2023-09-12"
+  },
+  {
+    "id": "fault_009",
+    "brandId": "brand_003",
+    "code": "E160",
+    "title": "Fan fault",
+    "severity": "warning",
+    "summary": "The fan is not operating correctly or not reaching required speed. The boiler will not ignite without proper fan operation.",
+    "causes": [
+      "Faulty fan",
+      "Blocked flue causing back pressure",
+      "Fan speed sensor issue",
+      "PCB fault"
+    ],
+    "lastVerifiedAt": "2023-08-25"
+  },
+  {
+    "id": "fault_010",
+    "brandId": "brand_004",
+    "code": "F2",
+    "title": "Temperature limiter triggered",
+    "severity": "critical",
+    "summary": "The safety temperature limiter has been triggered, shutting down the boiler to prevent overheating damage.",
+    "causes": [
+      "Pump not running or failed",
+      "System blockage",
+      "Low water pressure",
+      "Faulty temperature limiter"
+    ],
+    "safetyNotice": "Let the boiler cool down completely before resetting. Check system pressure before restart.",
+    "lastVerifiedAt": "2023-09-08"
+  },
+  {
+    "id": "fault_011",
+    "brandId": "brand_004",
+    "code": "F5",
+    "title": "Internal control fault",
+    "severity": "warning",
+    "summary": "An internal control or sensor error has been detected. Requires diagnostic testing.",
+    "causes": [
+      "Faulty temperature sensor",
+      "PCB issue",
+      "Wiring fault",
+      "Sensor connection problem"
+    ],
+    "lastVerifiedAt": "2023-09-15"
+  },
+  {
+    "id": "fault_012",
+    "brandId": "brand_005",
+    "code": "108",
+    "title": "Insufficient water circulation",
+    "severity": "warning",
+    "summary": "The system is not circulating water properly. This can lead to overheating and system damage.",
+    "causes": [
+      "Pump failure",
+      "Air lock in system",
+      "Blocked heat exchanger",
+      "Closed or blocked valves"
+    ],
+    "lastVerifiedAt": "2023-09-10"
+  },
+  {
+    "id": "fault_013",
+    "brandId": "brand_005",
+    "code": "501",
+    "title": "Ignition failure",
+    "severity": "critical",
+    "summary": "The boiler has failed to ignite after multiple attempts. No heating or hot water available.",
+    "causes": [
+      "No gas supply",
+      "Faulty gas valve",
+      "Ignition electrode fault",
+      "Air in gas line"
+    ],
+    "safetyNotice": "Check gas supply is on. If problem persists, contact a qualified engineer.",
+    "lastVerifiedAt": "2023-09-22"
+  },
+  {
+    "id": "fault_014",
+    "brandId": "brand_006",
+    "code": "F1",
+    "title": "Low water pressure",
+    "severity": "warning",
+    "summary": "System pressure has dropped below operational minimum. Boiler will not fire until pressure is restored.",
+    "causes": [
+      "System leak",
+      "Radiator bleeding without refill",
+      "Pressure relief valve dripping",
+      "Expansion vessel issue"
+    ],
+    "lastVerifiedAt": "2023-09-17"
+  },
+  {
+    "id": "fault_015",
+    "brandId": "brand_006",
+    "code": "F2",
+    "title": "Overheat protection activated",
+    "severity": "critical",
+    "summary": "The boiler has overheated and shut down for safety. This indicates a circulation or flow problem.",
+    "causes": [
+      "Pump not working",
+      "System blockage",
+      "Closed isolation valves",
+      "Faulty overheat thermostat"
+    ],
+    "safetyNotice": "Allow complete cooling before reset. Do not repeatedly reset if fault returns.",
+    "lastVerifiedAt": "2023-08-30"
+  },
+  {
+    "id": "fault_016",
+    "brandId": "brand_007",
+    "code": "A03",
+    "title": "Flame loss during operation",
+    "severity": "critical",
+    "summary": "The boiler ignited successfully but the flame was lost during operation. Safety lockout engaged.",
+    "causes": [
+      "Intermittent gas supply",
+      "Faulty flame sensor",
+      "Gas valve issue",
+      "Flue blockage"
+    ],
+    "safetyNotice": "If fault occurs repeatedly, do not keep resetting. Call a Gas Safe engineer.",
+    "lastVerifiedAt": "2023-09-14"
+  },
+  {
+    "id": "fault_017",
+    "brandId": "brand_007",
+    "code": "A01",
+    "title": "Ignition lockout",
+    "severity": "critical",
+    "summary": "The boiler has entered safety lockout after failed ignition attempts. Manual reset required.",
+    "causes": [
+      "No gas supply or valve closed",
+      "Faulty ignition lead or electrode",
+      "Gas valve fault",
+      "Electronic control fault"
+    ],
+    "lastVerifiedAt": "2023-09-19"
+  },
+  {
+    "id": "fault_018",
+    "brandId": "brand_008",
+    "code": "E01",
+    "title": "Ignition failure",
+    "severity": "critical",
+    "summary": "The boiler cannot establish ignition. System locked out for safety.",
+    "causes": [
+      "Gas supply interruption",
+      "Electrode gap incorrect or dirty",
+      "Faulty gas valve",
+      "PCB issue"
+    ],
+    "safetyNotice": "Verify gas supply before calling for service.",
+    "lastVerifiedAt": "2023-09-11"
+  },
+  {
+    "id": "fault_019",
+    "brandId": "brand_008",
+    "code": "E02",
+    "title": "Flame detection fault",
+    "severity": "critical",
+    "summary": "Flame is present but not being detected by the sensor, or false flame signal detected.",
+    "causes": [
+      "Dirty flame sensor",
+      "Ionization rod fault",
+      "PCB problem",
+      "Poor grounding"
+    ],
+    "lastVerifiedAt": "2023-08-28"
+  },
+  {
+    "id": "fault_020",
+    "brandId": "brand_008",
+    "code": "E10",
+    "title": "Low water pressure",
+    "severity": "warning",
+    "summary": "System water pressure is below minimum operating level.",
+    "causes": [
+      "Water leak",
+      "Pressure sensor fault",
+      "Recently bled radiators",
+      "Expansion vessel failure"
+    ],
+    "lastVerifiedAt": "2023-09-16"
+  },
+  {
+    "id": "fault_021",
+    "brandId": "brand_009",
+    "code": "A01",
+    "title": "Lack of flame or ionization fault",
+    "severity": "critical",
+    "summary": "The boiler cannot detect a flame signal. This is a safety lockout condition.",
+    "causes": [
+      "No gas or low gas pressure",
+      "Ionization electrode dirty or faulty",
+      "Gas valve not opening",
+      "Incorrect gas/air mixture"
+    ],
+    "safetyNotice": "Ensure gas supply is adequate before service call.",
+    "lastVerifiedAt": "2023-09-13"
+  },
+  {
+    "id": "fault_022",
+    "brandId": "brand_009",
+    "code": "A02",
+    "title": "Overheat safety thermostat",
+    "severity": "critical",
+    "summary": "The safety overheat thermostat has tripped due to excessive boiler temperature.",
+    "causes": [
+      "Circulation pump failure",
+      "System sludge or blockage",
+      "Closed valves",
+      "Faulty thermostat"
+    ],
+    "safetyNotice": "Allow cooling and check system circulation before reset.",
+    "lastVerifiedAt": "2023-08-22"
+  },
+  {
+    "id": "fault_023",
+    "brandId": "brand_009",
+    "code": "A03",
+    "title": "Flue thermostat safety lockout",
+    "severity": "critical",
+    "summary": "The flue safety thermostat has activated, indicating a flue problem or overheating condition.",
+    "causes": [
+      "Blocked flue or terminal",
+      "Fan failure",
+      "Incorrect flue installation",
+      "Faulty flue thermostat"
+    ],
+    "safetyNotice": "Do not operate boiler if flue is blocked. Risk of carbon monoxide.",
+    "lastVerifiedAt": "2023-09-07"
+  },
+  {
+    "id": "fault_024",
+    "brandId": "brand_010",
+    "code": "2E",
+    "title": "Fan speed monitoring fault",
+    "severity": "warning",
+    "summary": "The fan speed sensor detects incorrect fan operation. Boiler will not ignite without proper fan speed.",
+    "causes": [
+      "Fan failure or wear",
+      "Blocked flue causing restriction",
+      "Fan speed sensor fault",
+      "PCB issue"
+    ],
+    "lastVerifiedAt": "2023-09-09"
+  },
+  {
+    "id": "fault_025",
+    "brandId": "brand_010",
+    "code": "3C",
+    "title": "Flame signal fault",
+    "severity": "critical",
+    "summary": "Unexpected flame signal or no flame signal when expected. Safety shutdown engaged.",
+    "causes": [
+      "Faulty flame sensor",
+      "Gas valve leaking (dangerous)",
+      "PCB fault",
+      "Electrical interference"
+    ],
+    "safetyNotice": "If you smell gas when boiler is off, evacuate and call emergency gas service.",
+    "lastVerifiedAt": "2023-09-21"
+  },
+  {
+    "id": "fault_026",
+    "brandId": "brand_001",
+    "code": "F29",
+    "title": "Flame loss during operation",
+    "severity": "critical",
+    "summary": "The flame was lost while the boiler was running. Multiple causes possible.",
+    "causes": [
+      "Intermittent gas supply",
+      "Flue blockage",
+      "Faulty flame sensor",
+      "Wind pressure affecting flue"
+    ],
+    "lastVerifiedAt": "2023-08-18"
+  },
+  {
+    "id": "fault_027",
+    "brandId": "brand_001",
+    "code": "F62",
+    "title": "Gas valve fault",
+    "severity": "critical",
+    "summary": "The gas valve control circuit has detected a fault. The boiler cannot operate safely.",
+    "causes": [
+      "Faulty gas valve",
+      "PCB issue",
+      "Wiring fault to gas valve",
+      "Short circuit"
+    ],
+    "safetyNotice": "Gas valve faults require immediate professional attention.",
+    "lastVerifiedAt": "2023-09-03"
+  },
+  {
+    "id": "fault_028",
+    "brandId": "brand_002",
+    "code": "E5",
+    "title": "Fan speed fault",
+    "severity": "warning",
+    "summary": "The fan is not reaching the required speed for safe operation.",
+    "causes": [
+      "Fan bearing wear",
+      "Blocked air intake or flue",
+      "Faulty fan capacitor",
+      "Low voltage supply"
+    ],
+    "lastVerifiedAt": "2023-08-27"
+  },
+  {
+    "id": "fault_029",
+    "brandId": "brand_003",
+    "code": "E110",
+    "title": "Overheat shutdown",
+    "severity": "critical",
+    "summary": "The boiler has shut down due to excessive temperature in the heat exchanger.",
+    "causes": [
+      "Pump failure or air lock",
+      "Blocked heat exchanger",
+      "System sludge",
+      "Thermistor fault"
+    ],
+    "safetyNotice": "Check pump operation and system pressure before reset.",
+    "lastVerifiedAt": "2023-09-04"
+  },
+  {
+    "id": "fault_030",
+    "brandId": "brand_004",
+    "code": "A7",
+    "title": "Flame simulation",
+    "severity": "critical",
+    "summary": "A flame signal is detected when no gas should be present. This is a serious safety fault.",
+    "causes": [
+      "Faulty flame sensor",
+      "Gas valve leaking internally",
+      "PCB fault creating false signal",
+      "Moisture in electronics"
+    ],
+    "safetyNotice": "DANGER: This may indicate a gas leak. Turn off gas supply and call emergency services if gas smell present.",
+    "lastVerifiedAt": "2023-09-06"
+  },
+  {
+    "id": "fault_031",
+    "brandId": "brand_005",
+    "code": "303",
+    "title": "Pump stuck or blocked",
+    "severity": "warning",
+    "summary": "The circulation pump is not operating correctly. Water cannot circulate through the system.",
+    "causes": [
+      "Seized pump shaft",
+      "Debris in pump",
+      "Pump electrical fault",
+      "Air lock"
+    ],
+    "lastVerifiedAt": "2023-08-31"
+  },
+  {
+    "id": "fault_032",
+    "brandId": "brand_006",
+    "code": "L2",
+    "title": "Fan failure",
+    "severity": "warning",
+    "summary": "The combustion fan has failed or is not operating within parameters.",
+    "causes": [
+      "Fan motor failure",
+      "Blocked flue",
+      "Electrical supply issue",
+      "PCB fault"
+    ],
+    "lastVerifiedAt": "2023-09-02"
+  },
+  {
+    "id": "fault_033",
+    "brandId": "brand_007",
+    "code": "A06",
+    "title": "False flame detected",
+    "severity": "critical",
+    "summary": "The control system detects a flame when the gas valve is closed. Critical safety fault.",
+    "causes": [
+      "Ionization probe fault",
+      "Gas valve internal leak",
+      "PCB false signal",
+      "Condensation in electronics"
+    ],
+    "safetyNotice": "Do not operate boiler. If gas smell present, evacuate and call gas emergency.",
+    "lastVerifiedAt": "2023-08-24"
+  },
+  {
+    "id": "fault_034",
+    "brandId": "brand_008",
+    "code": "E25",
+    "title": "High temperature shutdown",
+    "severity": "critical",
+    "summary": "The boiler has exceeded safe operating temperature and shut down.",
+    "causes": [
+      "Pump not running",
+      "Low system water",
+      "Blocked heat exchanger",
+      "Temperature sensor fault"
+    ],
+    "safetyNotice": "Allow complete cooling. Check system pressure and pump operation.",
+    "lastVerifiedAt": "2023-09-01"
+  },
+  {
+    "id": "fault_035",
+    "brandId": "brand_009",
+    "code": "A04",
+    "title": "High temperature safety limit",
+    "severity": "critical",
+    "summary": "The high limit thermostat has activated due to dangerous temperature levels.",
+    "causes": [
+      "No water circulation",
+      "Pump failure",
+      "Scale buildup in heat exchanger",
+      "Thermostat fault"
+    ],
+    "safetyNotice": "Let boiler cool completely. Check for underlying circulation problems.",
+    "lastVerifiedAt": "2023-08-26"
+  },
+  {
+    "id": "fault_036",
+    "brandId": "brand_010",
+    "code": "4C",
+    "title": "Supply water temperature too low",
+    "severity": "info",
+    "summary": "The flow temperature sensor detects water temperature below expected levels.",
+    "causes": [
+      "Temperature sensor fault",
+      "Wiring issue",
+      "Heat exchanger problem",
+      "Low gas pressure"
+    ],
+    "lastVerifiedAt": "2023-09-12"
+  },
+  {
+    "id": "fault_037",
+    "brandId": "brand_001",
+    "code": "F54",
+    "title": "Gas valve or gas valve relay fault",
+    "severity": "critical",
+    "summary": "The control board cannot properly control the gas valve circuit.",
+    "causes": [
+      "Defective gas valve",
+      "Failed relay on PCB",
+      "Wiring short or open circuit",
+      "PCB fault"
+    ],
+    "lastVerifiedAt": "2023-08-29"
+  },
+  {
+    "id": "fault_038",
+    "brandId": "brand_002",
+    "code": "C6",
+    "title": "Fan failure or PCB fault",
+    "severity": "warning",
+    "summary": "The fan is not operating or the PCB cannot detect fan operation.",
+    "causes": [
+      "Defective fan",
+      "No power to fan",
+      "Blocked flue",
+      "PCB communication error"
+    ],
+    "lastVerifiedAt": "2023-09-05"
+  },
+  {
+    "id": "fault_039",
+    "brandId": "brand_003",
+    "code": "E125",
+    "title": "Boiler control fault",
+    "severity": "warning",
+    "summary": "Internal control system error. May require PCB replacement or software reset.",
+    "causes": [
+      "PCB failure",
+      "Power supply issues",
+      "Software corruption",
+      "Component communication failure"
+    ],
+    "lastVerifiedAt": "2023-08-17"
+  },
+  {
+    "id": "fault_040",
+    "brandId": "brand_004",
+    "code": "F6",
+    "title": "Flame sensor fault",
+    "severity": "critical",
+    "summary": "The flame sensing circuit is not working correctly. Boiler cannot verify safe combustion.",
+    "causes": [
+      "Dirty or damaged flame sensor",
+      "Poor electrical connection",
+      "PCB fault",
+      "Incorrect combustion"
+    ],
+    "lastVerifiedAt": "2023-09-11"
+  },
+  {
+    "id": "fault_041",
+    "brandId": "brand_005",
+    "code": "607",
+    "title": "DHW sensor fault",
+    "severity": "warning",
+    "summary": "The domestic hot water temperature sensor is reporting an error or out-of-range reading.",
+    "causes": [
+      "Faulty DHW sensor",
+      "Wiring disconnection",
+      "Corroded connections",
+      "Sensor short circuit"
+    ],
+    "lastVerifiedAt": "2023-08-21"
+  },
+  {
+    "id": "fault_042",
+    "brandId": "brand_006",
+    "code": "E3",
+    "title": "PCB overheating",
+    "severity": "warning",
+    "summary": "The printed circuit board temperature is too high. Boiler shuts down to prevent damage.",
+    "causes": [
+      "Poor ventilation around PCB",
+      "High ambient temperature",
+      "Component failure on PCB",
+      "Excessive electrical current"
+    ],
+    "lastVerifiedAt": "2023-09-08"
+  },
+  {
+    "id": "fault_043",
+    "brandId": "brand_007",
+    "code": "A41",
+    "title": "Heating flow temperature sensor fault",
+    "severity": "warning",
+    "summary": "The heating flow thermistor is reporting incorrect or no data.",
+    "causes": [
+      "Defective temperature sensor",
+      "Wiring fault",
+      "Corroded connector",
+      "Sensor out of calibration"
+    ],
+    "lastVerifiedAt": "2023-08-19"
+  },
+  {
+    "id": "fault_044",
+    "brandId": "brand_008",
+    "code": "E03",
+    "title": "Air pressure switch fault",
+    "severity": "warning",
+    "summary": "The air pressure switch is not detecting proper flue draft or fan operation.",
+    "causes": [
+      "Blocked flue",
+      "Fan not running",
+      "Faulty pressure switch",
+      "Condensate trap blocked"
+    ],
+    "lastVerifiedAt": "2023-09-14"
+  },
+  {
+    "id": "fault_045",
+    "brandId": "brand_009",
+    "code": "A06",
+    "title": "No demand signal",
+    "severity": "info",
+    "summary": "The boiler is not receiving a heating or hot water demand signal from the controls.",
+    "causes": [
+      "Thermostat not calling for heat",
+      "Faulty room thermostat",
+      "Wiring issue",
+      "Timer/programmer fault"
+    ],
+    "lastVerifiedAt": "2023-08-23"
+  },
+  {
+    "id": "fault_046",
+    "brandId": "brand_010",
+    "code": "6A",
+    "title": "Return temperature sensor fault",
+    "severity": "warning",
+    "summary": "The return water temperature sensor is faulty or reading out of range.",
+    "causes": [
+      "Defective sensor",
+      "Poor connection",
+      "Wiring damage",
+      "Sensor positioned incorrectly"
+    ],
+    "lastVerifiedAt": "2023-09-16"
+  },
+  {
+    "id": "fault_047",
+    "brandId": "brand_001",
+    "code": "F24",
+    "title": "Flow temperature rise too slow",
+    "severity": "warning",
+    "summary": "The water temperature is not rising at the expected rate. Possible circulation issue.",
+    "causes": [
+      "Pump speed too low",
+      "System blockage",
+      "Large air pocket",
+      "Faulty pump or temperature sensor"
+    ],
+    "lastVerifiedAt": "2023-08-15"
+  },
+  {
+    "id": "fault_048",
+    "brandId": "brand_002",
+    "code": "A1",
+    "title": "NTC thermistor fault",
+    "severity": "warning",
+    "summary": "One of the temperature sensors (NTC thermistors) is reporting a fault condition.",
+    "causes": [
+      "Disconnected sensor",
+      "Faulty NTC thermistor",
+      "Damaged wiring",
+      "Short circuit in sensor circuit"
+    ],
+    "lastVerifiedAt": "2023-09-18"
+  },
+  {
+    "id": "fault_049",
+    "brandId": "brand_003",
+    "code": "E168",
+    "title": "Gas valve circuit fault",
+    "severity": "critical",
+    "summary": "The gas valve control circuit has detected an abnormality. Safety lockout activated.",
+    "causes": [
+      "Gas valve coil failure",
+      "Short in gas valve wiring",
+      "PCB relay failure",
+      "Voltage supply problem"
+    ],
+    "safetyNotice": "Do not bypass gas valve safety circuits. Professional repair required.",
+    "lastVerifiedAt": "2023-09-20"
+  },
+  {
+    "id": "fault_050",
+    "brandId": "brand_004",
+    "code": "E9",
+    "title": "Electrical safety issue",
+    "severity": "critical",
+    "summary": "The boiler has detected an electrical safety fault and shut down to prevent hazard.",
+    "causes": [
+      "Earth leakage",
+      "Short circuit",
+      "Water ingress into electronics",
+      "Component failure"
+    ],
+    "safetyNotice": "Isolate electrical supply. Professional inspection required before restart.",
+    "lastVerifiedAt": "2023-08-16"
+  }
+]
+

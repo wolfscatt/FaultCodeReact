@@ -1,0 +1,69 @@
+[
+  {
+    "id": "brand_001",
+    "name": "Vaillant",
+    "aliases": ["Vaillant Group"],
+    "country": "Germany"
+  },
+  {
+    "id": "brand_002",
+    "name": "Worcester Bosch",
+    "aliases": ["Worcester", "Bosch"],
+    "country": "United Kingdom"
+  },
+  {
+    "id": "brand_003",
+    "name": "Baxi",
+    "aliases": ["Baxi Group"],
+    "country": "United Kingdom"
+  },
+  {
+    "id": "brand_004",
+    "name": "Viessmann",
+    "aliases": [],
+    "country": "Germany"
+  },
+  {
+    "id": "brand_005",
+    "name": "Ariston",
+    "aliases": ["Ariston Thermo"],
+    "country": "Italy"
+  },
+  {
+    "id": "brand_006",
+    "name": "Ideal",
+    "aliases": ["Ideal Boilers"],
+    "country": "United Kingdom"
+  },
+  {
+    "id": "brand_007",
+    "name": "Vokera",
+    "aliases": [],
+    "country": "Italy"
+  },
+  {
+    "id": "brand_008",
+    "name": "Arçelik",
+    "aliases": ["Beko"],
+    "country": "Turkey"
+  },
+  {
+    "id": "brand_008b",
+    "name": "Baymak",
+    "aliases": [],
+    "country": "Turkey"
+  },
+  {
+    "id": "brand_009",
+    "name": "Ferroli",
+    "aliases": [],
+    "country": "Italy"
+  },
+  {
+    "id": "brand_010",
+    "name": "Buderus",
+    "aliases": [],
+    "country": "Germany"
+  }
+]
+

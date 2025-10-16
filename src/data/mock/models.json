@@ -1,0 +1,93 @@
+[
+  {
+    "id": "model_001",
+    "brandId": "brand_001",
+    "modelName": "ecoTEC Plus",
+    "years": "2015-2023"
+  },
+  {
+    "id": "model_002",
+    "brandId": "brand_001",
+    "modelName": "ecoTEC Pro",
+    "years": "2012-2022"
+  },
+  {
+    "id": "model_003",
+    "brandId": "brand_001",
+    "modelName": "turboMAX",
+    "years": "2010-2020"
+  },
+  {
+    "id": "model_004",
+    "brandId": "brand_002",
+    "modelName": "Greenstar 30i",
+    "years": "2017-2023"
+  },
+  {
+    "id": "model_005",
+    "brandId": "brand_002",
+    "modelName": "Greenstar 25i",
+    "years": "2016-2023"
+  },
+  {
+    "id": "model_006",
+    "brandId": "brand_003",
+    "modelName": "Duo-tec Combi",
+    "years": "2014-2023"
+  },
+  {
+    "id": "model_007",
+    "brandId": "brand_003",
+    "modelName": "EcoBlue Advance",
+    "years": "2013-2022"
+  },
+  {
+    "id": "model_008",
+    "brandId": "brand_004",
+    "modelName": "Vitodens 100-W",
+    "years": "2015-2023"
+  },
+  {
+    "id": "model_009",
+    "brandId": "brand_004",
+    "modelName": "Vitodens 200-W",
+    "years": "2016-2023"
+  },
+  {
+    "id": "model_010",
+    "brandId": "brand_005",
+    "modelName": "Clas One",
+    "years": "2018-2023"
+  },
+  {
+    "id": "model_011",
+    "brandId": "brand_006",
+    "modelName": "Logic Max",
+    "years": "2015-2023"
+  },
+  {
+    "id": "model_012",
+    "brandId": "brand_007",
+    "modelName": "Vision 30C",
+    "years": "2016-2023"
+  },
+  {
+    "id": "model_013",
+    "brandId": "brand_008",
+    "modelName": "Elegance",
+    "years": "2017-2023"
+  },
+  {
+    "id": "model_014",
+    "brandId": "brand_009",
+    "modelName": "Bluehelix Tech",
+    "years": "2014-2023"
+  },
+  {
+    "id": "model_015",
+    "brandId": "brand_010",
+    "modelName": "Logamax Plus GB172",
+    "years": "2015-2023"
+  }
+]
+

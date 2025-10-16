@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+You MUST:
+- Use React Native 0.73.x with pinned, stable versions. NEVER use "latest", "^", or "~".
+- Prefer Yarn. Do not add Expo unless explicitly requested later.
+- If a dependency conflicts, DOWNGRADE to the last stable compatible set rather than upgrading core RN.
+- Generate small, focused commits with clear messages. Include README updates when setup changes.
+- Write TypeScript with strict mode, ESLint + Prettier, and basic Jest tests.
+- For data in MVP, use local mock JSON + typed repositories (no remote calls). Later we will switch to a real backend.

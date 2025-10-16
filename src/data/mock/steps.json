@@ -1,0 +1,423 @@
+[
+  {
+    "id": "step_001",
+    "faultCodeId": "fault_001",
+    "order": 1,
+    "text": "Check that the gas supply is turned on at the meter and the isolation valve near the boiler is open.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Gas meter with valve in open position"
+  },
+  {
+    "id": "step_002",
+    "faultCodeId": "fault_001",
+    "order": 2,
+    "text": "Press the reset button on the boiler and wait for it to attempt ignition. Listen for clicking sounds.",
+    "estimatedTimeMin": 3,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Boiler reset button being pressed"
+  },
+  {
+    "id": "step_003",
+    "faultCodeId": "fault_001",
+    "order": 3,
+    "text": "If the boiler still won't ignite, check the flue terminal outside for blockages (birds nests, debris).",
+    "estimatedTimeMin": 10,
+    "requiresPro": false,
+    "tools": ["Ladder", "Flashlight"],
+    "imagePrompt": "External flue terminal inspection"
+  },
+  {
+    "id": "step_004",
+    "faultCodeId": "fault_001",
+    "order": 4,
+    "text": "Contact a Gas Safe registered engineer to inspect the ignition electrode, gas valve, and electrical connections.",
+    "estimatedTimeMin": 60,
+    "requiresPro": true,
+    "tools": ["Multimeter", "Spark gap tool"],
+    "imagePrompt": "Engineer testing ignition electrode"
+  },
+  {
+    "id": "step_005",
+    "faultCodeId": "fault_002",
+    "order": 1,
+    "text": "Locate the filling loop (usually under the boiler) - it has two valves and connects the mains water to the heating system.",
+    "estimatedTimeMin": 3,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Boiler filling loop location"
+  },
+  {
+    "id": "step_006",
+    "faultCodeId": "fault_002",
+    "order": 2,
+    "text": "Slowly open both filling loop valves and watch the pressure gauge. Stop when it reaches 1.0-1.5 bar.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Filling loop valves being opened"
+  },
+  {
+    "id": "step_007",
+    "faultCodeId": "fault_002",
+    "order": 3,
+    "text": "Close both filling loop valves tightly. Check for any leaks around the connection.",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Closing filling loop valves"
+  },
+  {
+    "id": "step_008",
+    "faultCodeId": "fault_002",
+    "order": 4,
+    "text": "If pressure drops again quickly, there may be a leak in the system. Check radiator valves, visible pipes, and the pressure relief valve for drips. Call an engineer if leak found.",
+    "estimatedTimeMin": 15,
+    "requiresPro": false,
+    "tools": ["Flashlight", "Tissue paper"],
+    "imagePrompt": "Checking for water leaks"
+  },
+  {
+    "id": "step_009",
+    "faultCodeId": "fault_003",
+    "order": 1,
+    "text": "Turn off the boiler and wait 10 minutes. Turn it back on to see if the fault clears (may be temporary air lock).",
+    "estimatedTimeMin": 15,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Boiler power switch"
+  },
+  {
+    "id": "step_010",
+    "faultCodeId": "fault_003",
+    "order": 2,
+    "text": "Check that the pump speed is set correctly (usually marked on pump body). Medium or high setting recommended.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": ["Screwdriver"],
+    "imagePrompt": "Pump speed adjustment dial"
+  },
+  {
+    "id": "step_011",
+    "faultCodeId": "fault_003",
+    "order": 3,
+    "text": "Feel the pump body while boiler is trying to run. If it's very hot or not vibrating, the pump may be stuck.",
+    "estimatedTimeMin": 3,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Touching pump to check operation"
+  },
+  {
+    "id": "step_012",
+    "faultCodeId": "fault_003",
+    "order": 4,
+    "text": "Contact an engineer to inspect the pump impeller, check for blockages, and possibly replace the pump if faulty.",
+    "estimatedTimeMin": 90,
+    "requiresPro": true,
+    "tools": ["Pump removal tools", "Replacement pump"],
+    "imagePrompt": "Engineer removing circulation pump"
+  },
+  {
+    "id": "step_013",
+    "faultCodeId": "fault_004",
+    "order": 1,
+    "text": "Turn off the boiler and wait 5 minutes. Then power it back on and attempt to reset.",
+    "estimatedTimeMin": 8,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Boiler reset procedure"
+  },
+  {
+    "id": "step_014",
+    "faultCodeId": "fault_004",
+    "order": 2,
+    "text": "If fault persists, contact a Gas Safe engineer to clean or replace the flame sensor and check the combustion chamber.",
+    "estimatedTimeMin": 60,
+    "requiresPro": true,
+    "tools": ["Flame sensor cleaning kit", "Multimeter"],
+    "imagePrompt": "Cleaning flame detection electrode"
+  },
+  {
+    "id": "step_015",
+    "faultCodeId": "fault_005",
+    "order": 1,
+    "text": "IMPORTANT: Do not reset until the boiler has completely cooled down (at least 30 minutes).",
+    "estimatedTimeMin": 30,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Waiting for boiler to cool"
+  },
+  {
+    "id": "step_016",
+    "faultCodeId": "fault_005",
+    "order": 2,
+    "text": "Check system pressure - should be 1.0-1.5 bar. Top up if needed using the filling loop.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Checking boiler pressure gauge"
+  },
+  {
+    "id": "step_017",
+    "faultCodeId": "fault_005",
+    "order": 3,
+    "text": "Feel the pump body - it should vibrate when boiler runs. If silent or very hot, pump may have failed.",
+    "estimatedTimeMin": 3,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Checking pump operation by touch"
+  },
+  {
+    "id": "step_018",
+    "faultCodeId": "fault_005",
+    "order": 4,
+    "text": "Call a heating engineer to diagnose pump failure, system blockage, or thermostat fault. Do not keep resetting if overheat repeats.",
+    "estimatedTimeMin": 90,
+    "requiresPro": true,
+    "tools": ["Diagnostic equipment", "Pump tester"],
+    "imagePrompt": "Engineer diagnosing overheat cause"
+  },
+  {
+    "id": "step_019",
+    "faultCodeId": "fault_010",
+    "order": 1,
+    "text": "Allow the boiler to cool completely (minimum 30 minutes) before attempting any further action.",
+    "estimatedTimeMin": 30,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Waiting for boiler cooldown"
+  },
+  {
+    "id": "step_020",
+    "faultCodeId": "fault_010",
+    "order": 2,
+    "text": "Check system pressure on the gauge. If below 1 bar, use filling loop to restore pressure to 1.0-1.5 bar.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Refilling system pressure"
+  },
+  {
+    "id": "step_021",
+    "faultCodeId": "fault_010",
+    "order": 3,
+    "text": "Press the reset button on the overheat thermostat (usually located on the boiler heat exchanger with a red button).",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Overheat thermostat reset button"
+  },
+  {
+    "id": "step_022",
+    "faultCodeId": "fault_010",
+    "order": 4,
+    "text": "If fault repeats, call an engineer to check pump operation, system flow, and identify the cause of overheating.",
+    "estimatedTimeMin": 90,
+    "requiresPro": true,
+    "tools": ["Flow meter", "Temperature probes"],
+    "imagePrompt": "Engineer measuring system flow"
+  },
+  {
+    "id": "step_023",
+    "faultCodeId": "fault_013",
+    "order": 1,
+    "text": "Verify gas supply: Check main gas meter is on, and try other gas appliances in the home to confirm gas flow.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Checking gas meter status"
+  },
+  {
+    "id": "step_024",
+    "faultCodeId": "fault_013",
+    "order": 2,
+    "text": "Check the boiler's gas isolation valve (usually near the boiler) is fully open.",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Gas isolation valve at boiler"
+  },
+  {
+    "id": "step_025",
+    "faultCodeId": "fault_013",
+    "order": 3,
+    "text": "Press the reset button and listen for spark clicking sounds. If no sound, there may be an electrical fault.",
+    "estimatedTimeMin": 3,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Listening for ignition spark"
+  },
+  {
+    "id": "step_026",
+    "faultCodeId": "fault_013",
+    "order": 4,
+    "text": "Contact a Gas Safe registered engineer to test gas valve operation, ignition electrode, and gas pressure.",
+    "estimatedTimeMin": 60,
+    "requiresPro": true,
+    "tools": ["Gas pressure gauge", "Multimeter", "Spark tester"],
+    "imagePrompt": "Engineer testing gas valve"
+  },
+  {
+    "id": "step_027",
+    "faultCodeId": "fault_014",
+    "order": 1,
+    "text": "Check pressure gauge reading. If below 1 bar (often in red zone), system needs repressurizing.",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Low pressure gauge reading"
+  },
+  {
+    "id": "step_028",
+    "faultCodeId": "fault_014",
+    "order": 2,
+    "text": "Locate and open the filling loop valves slowly. Watch pressure gauge rise to 1.0-1.5 bar, then close valves.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Using filling loop"
+  },
+  {
+    "id": "step_029",
+    "faultCodeId": "fault_014",
+    "order": 3,
+    "text": "Reset the boiler. It should now operate normally.",
+    "estimatedTimeMin": 1,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Resetting boiler after pressure fix"
+  },
+  {
+    "id": "step_030",
+    "faultCodeId": "fault_014",
+    "order": 4,
+    "text": "If pressure drops again quickly, inspect system for leaks. Check radiator valves, pipe joints, and pressure relief valve. Call engineer if leak found.",
+    "estimatedTimeMin": 20,
+    "requiresPro": false,
+    "tools": ["Flashlight", "Paper towels"],
+    "imagePrompt": "Inspecting for water leaks"
+  },
+  {
+    "id": "step_031",
+    "faultCodeId": "fault_020",
+    "order": 1,
+    "text": "Check the pressure gauge. System should read 1.0-1.5 bar. If low, use filling loop to restore pressure.",
+    "estimatedTimeMin": 5,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Checking and adjusting pressure"
+  },
+  {
+    "id": "step_032",
+    "faultCodeId": "fault_020",
+    "order": 2,
+    "text": "Reset the boiler by pressing the reset button.",
+    "estimatedTimeMin": 1,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Boiler reset button"
+  },
+  {
+    "id": "step_033",
+    "faultCodeId": "fault_020",
+    "order": 3,
+    "text": "If E10 returns immediately despite good pressure, the pressure sensor may be faulty. Contact a technician.",
+    "estimatedTimeMin": 60,
+    "requiresPro": true,
+    "tools": ["Replacement pressure sensor"],
+    "imagePrompt": "Replacing pressure sensor"
+  },
+  {
+    "id": "step_034",
+    "faultCodeId": "fault_025",
+    "order": 1,
+    "text": "URGENT: If you smell gas when the boiler is off, evacuate the property immediately and call the gas emergency hotline.",
+    "estimatedTimeMin": 0,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Emergency evacuation procedure"
+  },
+  {
+    "id": "step_035",
+    "faultCodeId": "fault_025",
+    "order": 2,
+    "text": "If no gas smell, turn off the boiler and do not attempt to restart. Call a Gas Safe engineer immediately.",
+    "estimatedTimeMin": 1,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Turning off boiler isolation switch"
+  },
+  {
+    "id": "step_036",
+    "faultCodeId": "fault_025",
+    "order": 3,
+    "text": "Engineer will test flame sensor, gas valve integrity, and control board to identify false signal source.",
+    "estimatedTimeMin": 90,
+    "requiresPro": true,
+    "tools": ["Gas leak detector", "Multimeter", "Manometer"],
+    "imagePrompt": "Engineer testing gas valve safety"
+  },
+  {
+    "id": "step_037",
+    "faultCodeId": "fault_030",
+    "order": 1,
+    "text": "DANGER: This fault indicates a possible gas leak. If you smell gas, evacuate immediately and call emergency gas services (in UK: 0800 111 999).",
+    "estimatedTimeMin": 0,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Emergency gas leak response"
+  },
+  {
+    "id": "step_038",
+    "faultCodeId": "fault_030",
+    "order": 2,
+    "text": "Turn off gas supply at the meter if safe to do so. Do not operate any electrical switches.",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Turning off gas at meter"
+  },
+  {
+    "id": "step_039",
+    "faultCodeId": "fault_030",
+    "order": 3,
+    "text": "Do not restart boiler. Wait for Gas Safe registered emergency engineer to inspect and repair.",
+    "estimatedTimeMin": 120,
+    "requiresPro": true,
+    "tools": ["Gas detector", "Leak detection spray", "Manometer"],
+    "imagePrompt": "Emergency gas engineer inspection"
+  },
+  {
+    "id": "step_040",
+    "faultCodeId": "fault_033",
+    "order": 1,
+    "text": "CRITICAL SAFETY FAULT: If you smell gas, evacuate immediately and call gas emergency services.",
+    "estimatedTimeMin": 0,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Gas emergency response"
+  },
+  {
+    "id": "step_041",
+    "faultCodeId": "fault_033",
+    "order": 2,
+    "text": "If no gas smell, turn off boiler power and gas supply. Do not attempt to restart.",
+    "estimatedTimeMin": 2,
+    "requiresPro": false,
+    "tools": [],
+    "imagePrompt": "Isolating boiler gas and power"
+  },
+  {
+    "id": "step_042",
+    "faultCodeId": "fault_033",
+    "order": 3,
+    "text": "Contact Gas Safe engineer immediately for emergency inspection of gas valve and flame detection system.",
+    "estimatedTimeMin": 90,
+    "requiresPro": true,
+    "tools": ["Gas analyzer", "Valve tester"],
+    "imagePrompt": "Engineer testing gas valve safety"
+  }
+]
+
