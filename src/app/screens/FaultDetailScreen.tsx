@@ -20,6 +20,8 @@ import {useTranslation} from 'react-i18next';
 import {getFaultById} from '@data/repo/faultRepo';
 import {FaultDetailResult} from '@data/types';
 import {useUserStore, useCanAccessContent} from '@state/useUserStore';
+import {addFavorite, removeFavorite, isFavorited} from '@data/repo/favoritesRepo';
+import PaywallModal from '@components/PaywallModal';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
 import {useTheme} from '@theme/useTheme';
 import {formatDate} from '@utils/index';
@@ -35,12 +37,13 @@ export default function FaultDetailScreen({route, navigation}: Props) {
   const {colors: themedColors} = useTheme();
   const [data, setData] = useState<FaultDetailResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const [bookmarked, setBookmarked] = useState(false);
-  const {canAccess, remaining, limit} = useCanAccessContent();
-  const {incrementQuota, checkAndResetQuota, plan} = useUserStore();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const {canAccess, remaining, limit, isPremium: isPremiumProp} = useCanAccessContent();
+  const {incrementQuota, checkAndResetQuota, plan, userId, isPremium} = useUserStore();
 
   useEffect(() => {
-    // Check if daily quota needs reset
+    // Check if monthly quota needs reset
     checkAndResetQuota();
 
     // Check if user can access content
@@ -61,6 +64,12 @@ export default function FaultDetailScreen({route, navigation}: Props) {
         const result = await getFaultById(faultId);
         setData(result);
         
+        // Check if fault is favorited (for logged-in users)
+        if (userId) {
+          const {isFavorited: favStatus} = await isFavorited(userId, faultId);
+          setIsFavorite(favStatus);
+        }
+        
         // Log fault view analytics event
         if (result) {
           analytics.faultView(
@@ -78,7 +87,7 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     };
 
     loadData();
-  }, [faultId, canAccess, plan, incrementQuota, checkAndResetQuota, navigation, language]);
+  }, [faultId, canAccess, plan, incrementQuota, checkAndResetQuota, navigation, language, userId]);
 
   // Create dynamic styles based on current theme
   const styles = StyleSheet.create({
@@ -363,24 +372,76 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     Alert.alert('Copied!', 'Resolution steps copied to clipboard');
   };
 
-  // Bookmark (mock)
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked);
-    Alert.alert(
-      bookmarked ? 'Removed' : 'Saved!',
-      bookmarked 
-        ? 'Removed from bookmarks' 
-        : 'Added to bookmarks (mock - not persisted)'
-    );
+  // Handle favorites (Premium-only)
+  const handleFavorite = async () => {
+    // Check if user is logged in
+    if (!userId) {
+      Alert.alert(
+        t('favorites.login_required', 'Login Required'),
+        t('favorites.login_message', 'Please login to save favorites'),
+      );
+      return;
+    }
+
+    // Check if user is premium
+    if (!isPremium()) {
+      setShowPaywall(true);
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        const {success} = await removeFavorite(userId, faultId);
+        if (success) {
+          setIsFavorite(false);
+          Alert.alert(
+            t('favorites.remove_success', 'Removed from favorites'),
+            '',
+            [{text: t('common.ok', 'OK')}],
+          );
+        }
+      } else {
+        // Add to favorites
+        const {success} = await addFavorite(userId, faultId);
+        if (success) {
+          setIsFavorite(true);
+          Alert.alert(
+            t('favorites.add_success', 'Added to favorites'),
+            '',
+            [{text: t('common.ok', 'OK')}],
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+      Alert.alert(
+        t('common.error', 'Error'),
+        t('favorites.error', 'Failed to update favorites'),
+      );
+    }
+  };
+
+  const handleUpgrade = () => {
+    setShowPaywall(false);
+    navigation.navigate('Paywall' as any);
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Paywall Modal */}
+      <PaywallModal
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onUpgrade={handleUpgrade}
+        reason="favorites_locked"
+      />
+
       {/* Quota indicator for free users */}
       {plan === 'free' && (
         <View style={styles.quotaBar}>
           <Text style={styles.quotaText}>
-            {t('paywall.remainingToday', {remaining, limit})}
+            {t('paywall.remainingThisMonth', {remaining, limit})}
           </Text>
         </View>
       )}
@@ -439,10 +500,10 @@ export default function FaultDetailScreen({route, navigation}: Props) {
             <View style={styles.actionButtons}>
               <TouchableOpacity 
                 style={styles.actionButton} 
-                onPress={handleBookmark}
-                testID="bookmark-button">
+                onPress={handleFavorite}
+                testID="favorite-button">
                 <Text style={styles.actionButtonText}>
-                  {bookmarked ? '★' : '☆'} Save
+                  {isFavorite ? '★' : '☆'} {isFavorite ? t('favorites.saved', 'Saved') : t('common.save', 'Save')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity 

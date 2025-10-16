@@ -16,6 +16,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import PaywallScreen from '../screens/PaywallScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -113,6 +114,16 @@ export default function RootNavigator() {
             presentation: 'modal',
             headerShown: true,
             headerTitle: 'Profile',
+          }}
+        />
+        <Stack.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={{
+            presentation: 'card',
+            headerShown: true,
+            headerTitle: 'Favorites',
+            headerBackTitle: 'Back',
           }}
         />
       </Stack.Navigator>

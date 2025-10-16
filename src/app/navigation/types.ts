@@ -14,6 +14,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Paywall: undefined;
   Profile: undefined;
+  Favorites: undefined;
 };
 
 // Main Bottom Tabs

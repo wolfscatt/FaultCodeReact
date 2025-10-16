@@ -124,6 +124,8 @@ export default {
     add_success: 'Added to favorites',
     remove_success: 'Removed from favorites',
     error: 'Failed to update favorites',
+    login_required: 'Login Required',
+    login_message: 'Please login to save favorites',
   },
 
   navigation: {

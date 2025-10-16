@@ -124,6 +124,8 @@ export default {
     add_success: 'Favorilere eklendi',
     remove_success: 'Favorilerden kaldırıldı',
     error: 'Favoriler güncellenemedi',
+    login_required: 'Giriş Gerekli',
+    login_message: 'Favorileri kaydetmek için lütfen giriş yapın',
   },
 
   navigation: {
