@@ -276,7 +276,18 @@ SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
-### 4. Test Authentication
+### 4. Apply Database Trigger Migration
+
+**Important:** Run the migration to enable automatic user profile creation:
+
+```sql
+-- Run this in Supabase SQL Editor
+-- Copy from: scripts/migrations/001_add_user_trigger.sql
+```
+
+This creates a database trigger that automatically creates user profiles when new auth users are created, even before email verification.
+
+### 5. Test Authentication
 
 ```bash
 # Start the app
@@ -290,6 +301,98 @@ yarn android  # or yarn ios
 5. Logout
 6. Login again (should remember session)
 ```
+
+---
+
+## 📧 Email Verification
+
+### Overview
+
+By default, Supabase requires email verification for new users. The app handles this gracefully with automatic user profile creation.
+
+### How It Works
+
+1. **User Registers:**
+   - User enters email and password
+   - Supabase creates auth user
+   - Database trigger automatically creates user profile
+   - Session is `null` until email is verified
+
+2. **Verification Required:**
+   - App detects `null` session
+   - Shows success message: "Please check your email to verify your account"
+   - Redirects to Login screen
+
+3. **User Verifies Email:**
+   - Clicks verification link in email
+   - Supabase confirms email
+   - User can now log in
+
+4. **User Logs In:**
+   - Enters credentials
+   - Supabase creates session
+   - App loads user profile (already exists from trigger)
+   - User is logged in successfully
+
+### Database Trigger
+
+The `on_auth_user_created` trigger ensures user profiles are created immediately when auth users are created:
+
+```sql
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+```
+
+**Benefits:**
+- ✅ No "Failed to create user profile" errors
+- ✅ Works even before email verification
+- ✅ Bypasses RLS policies using `SECURITY DEFINER`
+- ✅ Assigns default free plan automatically
+
+### Customizing Email Templates
+
+1. Go to **Supabase Dashboard** → **Authentication** → **Email Templates**
+2. Select **Confirm signup** template
+3. Customize with your branding:
+
+```html
+<h2>Welcome to FaultCode!</h2>
+<p>Please verify your email:</p>
+<p><a href="{{ .ConfirmationURL }}">Verify Email</a></p>
+```
+
+### Disabling Email Verification (Development Only)
+
+⚠️ **Not recommended for production**
+
+1. Go to **Dashboard** → **Authentication** → **Settings**
+2. Disable **Enable email confirmations**
+3. Users will be auto-confirmed on signup
+
+### Troubleshooting
+
+**Issue:** Registration fails with "Failed to create user profile"
+
+**Solution:** Run the migration script `scripts/migrations/001_add_user_trigger.sql`
+
+**Issue:** No verification email received
+
+**Solutions:**
+- Check spam folder
+- Verify SMTP settings in Supabase
+- Check Auth Logs in Supabase Dashboard
+
+**Issue:** User created but no profile in users table
+
+**Solution:** Verify the trigger exists:
+```sql
+SELECT * FROM information_schema.triggers 
+WHERE trigger_name = 'on_auth_user_created';
+```
+
+For detailed troubleshooting, see: `EMAIL_VERIFICATION_FIX.md`
 
 ---
 
