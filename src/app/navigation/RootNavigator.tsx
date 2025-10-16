@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import {View, ActivityIndicator} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {RootStackParamList} from './types';
@@ -19,9 +20,13 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
   const {isInitialized, isLoggedIn} = useUserStore();
 
-  // Show nothing while initializing auth state
+  // Show loading screen while checking for existing session
   if (!isInitialized) {
-    return null;
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff'}}>
+        <ActivityIndicator size="large" color="#3B82F6" />
+      </View>
+    );
   }
 
   return (
@@ -30,7 +35,7 @@ export default function RootNavigator() {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'}>
+        initialRouteName={isLoggedIn ? 'MainTabs' : 'MainTabs'}>
         {/* Auth Screens */}
         <Stack.Screen
           name="Login"

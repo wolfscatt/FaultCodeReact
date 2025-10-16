@@ -41,16 +41,24 @@ export const signUp = async (
   email: string,
   password: string,
 ): Promise<AuthResult> => {
-  const {data, error} = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  try {
+    const {data, error} = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-  return {
-    user: data.user,
-    session: data.session,
-    error,
-  };
+    return {
+      user: data.user,
+      session: data.session,
+      error,
+    };
+  } catch (error: any) {
+    return {
+      user: null,
+      session: null,
+      error: {message: error?.message || 'Sign up failed', name: 'AuthError'} as any,
+    };
+  }
 };
 
 /**
@@ -60,16 +68,24 @@ export const signIn = async (
   email: string,
   password: string,
 ): Promise<AuthResult> => {
-  const {data, error} = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const {data, error} = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  return {
-    user: data.user,
-    session: data.session,
-    error,
-  };
+    return {
+      user: data.user,
+      session: data.session,
+      error,
+    };
+  } catch (error: any) {
+    return {
+      user: null,
+      session: null,
+      error: {message: error?.message || 'Sign in failed', name: 'AuthError'} as any,
+    };
+  }
 };
 
 /**

@@ -74,7 +74,7 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1 bg-white dark:bg-gray-900">
       <ScrollView
-        contentContainerClassName="flex-grow justify-center px-6"
+        contentContainerStyle={{flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24}}
         keyboardShouldPersistTaps="handled">
         <View className="mb-10">
           <Text className="text-4xl font-bold text-gray-900 dark:text-white mb-2">

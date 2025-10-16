@@ -9,6 +9,8 @@
  */
 
 import {FaultCode, SearchFilters, FaultDetailResult} from '../types';
+import * as mockFaultRepo from './faultRepo.mock';
+import * as supabaseFaultRepo from './supabase/faultRepo.supabase';
 
 // Check if Supabase is configured
 // Safely import env vars (may not be available in tests)
@@ -25,20 +27,8 @@ try {
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-// Import appropriate repository based on configuration
-let faultRepo: {
-  searchFaults: (filters: SearchFilters) => Promise<FaultCode[]>;
-  getFaultById: (id: string) => Promise<FaultDetailResult | null>;
-  getRecentFaults: (limit?: number) => Promise<FaultCode[]>;
-};
-
-if (USE_SUPABASE) {
-  // Use Supabase repository (with fallback to mock)
-  faultRepo = require('./supabase/faultRepo.supabase');
-} else {
-  // Use mock repository directly
-  faultRepo = require('./faultRepo.mock');
-}
+// Select appropriate repository based on configuration
+const faultRepo = USE_SUPABASE ? supabaseFaultRepo : mockFaultRepo;
 
 /**
  * Search faults with relevancy scoring

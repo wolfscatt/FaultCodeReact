@@ -9,6 +9,8 @@
  */
 
 import {Brand} from '../types';
+import * as mockBrandRepo from './brandRepo.mock';
+import * as supabaseBrandRepo from './supabase/brandRepo.supabase';
 
 // Check if Supabase is configured
 // Safely import env vars (may not be available in tests)
@@ -25,20 +27,8 @@ try {
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-// Import appropriate repository based on configuration
-let brandRepo: {
-  searchBrands: (query: string) => Promise<Brand[]>;
-  getBrandById: (id: string) => Promise<Brand | null>;
-  getAllBrands: () => Promise<Brand[]>;
-};
-
-if (USE_SUPABASE) {
-  // Use Supabase repository (with fallback to mock)
-  brandRepo = require('./supabase/brandRepo.supabase');
-} else {
-  // Use mock repository directly
-  brandRepo = require('./brandRepo.mock');
-}
+// Select appropriate repository based on configuration
+const brandRepo = USE_SUPABASE ? supabaseBrandRepo : mockBrandRepo;
 
 /**
  * Searches brands by name or alias
