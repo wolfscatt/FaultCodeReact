@@ -49,6 +49,11 @@ jobs:
       
       - name: Run tests
         run: yarn test --ci --coverage --maxWorkers=2
+        env:
+          # Supabase credentials (empty for tests - mocks are used)
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || '' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || '' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}
       
       - name: Upload coverage to Codecov (optional)
         uses: codecov/codecov-action@v4

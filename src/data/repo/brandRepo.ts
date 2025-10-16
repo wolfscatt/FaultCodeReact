@@ -9,10 +9,21 @@
  */
 
 import {Brand} from '../types';
-import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
 
 // Check if Supabase is configured
-const USE_SUPABASE = SUPABASE_URL && SUPABASE_ANON_KEY;
+// Safely import env vars (may not be available in tests)
+let SUPABASE_URL = '';
+let SUPABASE_ANON_KEY = '';
+
+try {
+  const env = require('@env');
+  SUPABASE_URL = env.SUPABASE_URL || '';
+  SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
+} catch {
+  // Env vars not available (likely in tests), use mock data
+}
+
+const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 // Import appropriate repository based on configuration
 let brandRepo: {
