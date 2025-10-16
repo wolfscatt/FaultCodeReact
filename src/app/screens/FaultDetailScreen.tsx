@@ -76,7 +76,7 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     };
 
     loadData();
-  }, [faultId, canAccess, plan, incrementQuota, checkAndResetQuota, navigation]);
+  }, [faultId, canAccess, plan, incrementQuota, checkAndResetQuota, navigation, language]);
 
   if (loading) {
     return (
