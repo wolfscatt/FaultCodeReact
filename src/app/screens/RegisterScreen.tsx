@@ -14,10 +14,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useUserStore} from '@state/useUserStore';
+import {useTheme} from '@theme/useTheme';
+import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -25,6 +28,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList>;
 export default function RegisterScreen() {
   const navigation = useNavigation<NavigationProp>();
   const {register, isLoading} = useUserStore();
+  const {colors: themedColors} = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,31 +92,116 @@ export default function RegisterScreen() {
     navigation.navigate('Login');
   };
 
+  // Create dynamic styles based on current theme
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: themedColors.background,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      paddingHorizontal: spacing.lg,
+    },
+    header: {
+      marginBottom: spacing.xl,
+    },
+    title: {
+      fontSize: typography.sizes['4xl'],
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
+    },
+    subtitle: {
+      fontSize: typography.sizes.lg,
+      color: themedColors.textSecondary,
+    },
+    inputContainer: {
+      marginBottom: spacing.md,
+    },
+    inputContainerLarge: {
+      marginBottom: spacing.lg,
+    },
+    label: {
+      fontSize: typography.sizes.sm,
+      fontWeight: typography.weights.medium,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
+    },
+    input: {
+      backgroundColor: themedColors.background,
+      color: themedColors.text,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+      fontSize: typography.sizes.base,
+    },
+    hint: {
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+      marginTop: spacing.xs,
+    },
+    button: {
+      backgroundColor: colors.primary[600],
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
+      marginBottom: spacing.md,
+      opacity: isLoading ? 0.5 : 1,
+    },
+    buttonText: {
+      color: '#ffffff',
+      textAlign: 'center',
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.lg,
+    },
+    linkContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    linkText: {
+      color: themedColors.textSecondary,
+      fontSize: typography.sizes.base,
+    },
+    linkButton: {
+      color: colors.primary[600],
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.base,
+    },
+    termsContainer: {
+      marginTop: spacing.xl,
+      paddingTop: spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: themedColors.border,
+    },
+    termsText: {
+      textAlign: 'center',
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+    },
+  });
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-white dark:bg-gray-900">
+      style={styles.container}>
       <ScrollView
-        contentContainerStyle={{flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24}}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        <View className="mb-10">
-          <Text className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Create Account
-          </Text>
-          <Text className="text-lg text-gray-600 dark:text-gray-400">
-            Sign up to get started
-          </Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Sign up to get started</Text>
         </View>
 
         {/* Email Input */}
-        <View className="mb-4">
-          <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Email
-          </Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
           <TextInput
-            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700"
+            style={styles.input}
             placeholder="your.email@example.com"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -123,14 +212,12 @@ export default function RegisterScreen() {
         </View>
 
         {/* Password Input */}
-        <View className="mb-4">
-          <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Password
-          </Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
           <TextInput
-            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700"
+            style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -138,20 +225,16 @@ export default function RegisterScreen() {
             autoComplete="password"
             editable={!isLoading}
           />
-          <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            At least 6 characters
-          </Text>
+          <Text style={styles.hint}>At least 6 characters</Text>
         </View>
 
         {/* Confirm Password Input */}
-        <View className="mb-6">
-          <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Confirm Password
-          </Text>
+        <View style={styles.inputContainerLarge}>
+          <Text style={styles.label}>Confirm Password</Text>
           <TextInput
-            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700"
+            style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -163,33 +246,27 @@ export default function RegisterScreen() {
 
         {/* Register Button */}
         <TouchableOpacity
-          className={`bg-blue-500 py-4 rounded-lg mb-4 ${
-            isLoading ? 'opacity-50' : ''
-          }`}
+          style={styles.button}
           onPress={handleRegister}
           disabled={isLoading}>
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-white text-center font-semibold text-lg">
-              Create Account
-            </Text>
+            <Text style={styles.buttonText}>Create Account</Text>
           )}
         </TouchableOpacity>
 
         {/* Login Link */}
-        <View className="flex-row justify-center items-center">
-          <Text className="text-gray-600 dark:text-gray-400">
-            Already have an account?{' '}
-          </Text>
+        <View style={styles.linkContainer}>
+          <Text style={styles.linkText}>Already have an account? </Text>
           <TouchableOpacity onPress={goToLogin} disabled={isLoading}>
-            <Text className="text-blue-500 font-semibold">Sign In</Text>
+            <Text style={styles.linkButton}>Sign In</Text>
           </TouchableOpacity>
         </View>
 
         {/* Terms and Privacy */}
-        <View className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
-          <Text className="text-center text-xs text-gray-500 dark:text-gray-400">
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
             By creating an account, you agree to our{'\n'}
             Terms of Service and Privacy Policy
           </Text>
