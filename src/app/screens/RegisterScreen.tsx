@@ -50,16 +50,35 @@ export default function RegisterScreen() {
     const result = await register(email, password);
 
     if (result.success) {
-      Alert.alert(
-        'Success',
-        'Account created! Check your email to verify your account.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('MainTabs'),
-          },
-        ],
-      );
+      // Check if email verification is required
+      if (result.requiresVerification) {
+        Alert.alert(
+          '✅ Registration Successful',
+          'We\'ve sent a verification link to your email. Please check your inbox and verify your account before logging in.',
+          [
+            {
+              text: 'Go to Login',
+              onPress: () => navigation.navigate('Login'),
+            },
+          ],
+        );
+      } else {
+        // Auto-confirmed (email verification disabled)
+        Alert.alert(
+          'Success',
+          'Account created successfully!',
+          [
+            {
+              text: 'OK',
+              onPress: () =>
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'MainTabs'}],
+                }),
+            },
+          ],
+        );
+      }
     } else {
       Alert.alert('Registration Failed', result.error || 'Please try again');
     }

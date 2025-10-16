@@ -157,7 +157,19 @@ export const useUserStore = create<UserState>()(
           };
         }
 
-        // Create user record in database
+        // Check if email verification is required (session will be null)
+        if (!session) {
+          set(state => {
+            state.isLoading = false;
+          });
+          return {
+            success: true,
+            requiresVerification: true,
+            message: 'Please check your email to verify your account',
+          };
+        }
+
+        // If we have a session, create user record in database
         const {success, error: createError} = await AuthService.createUserRecord(
           user.id,
         );
@@ -168,7 +180,7 @@ export const useUserStore = create<UserState>()(
           });
           return {
             success: false,
-            error: 'Failed to create user profile',
+            error: createError?.message || 'Failed to create user profile',
           };
         }
 
@@ -183,7 +195,7 @@ export const useUserStore = create<UserState>()(
           state.isLoading = false;
         });
 
-        return {success: true};
+        return {success: true, requiresVerification: false};
       } catch (error: any) {
         set(state => {
           state.isLoading = false;

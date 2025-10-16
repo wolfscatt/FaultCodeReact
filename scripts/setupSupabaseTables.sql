@@ -388,6 +388,50 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 COMMENT ON FUNCTION increment_user_quota IS 'Increments user daily quota, resetting if new day';
 
+-- Function to automatically create user record when auth user is created
+-- This runs after a new user signs up, before email verification
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+  free_plan_id UUID;
+BEGIN
+  -- Get the free plan ID
+  SELECT id INTO free_plan_id
+  FROM public.plans
+  WHERE name = 'free'
+  LIMIT 1;
+
+  -- Create user record with default free plan
+  INSERT INTO public.users (id, plan_id, daily_quota_used, last_quota_reset_date, preferences)
+  VALUES (
+    NEW.id,
+    free_plan_id,
+    0,
+    CURRENT_DATE,
+    jsonb_build_object('language', 'en', 'theme', 'light')
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+COMMENT ON FUNCTION handle_new_user IS 'Automatically creates user profile when auth user is created';
+
+-- ============================================================================
+-- TRIGGERS
+-- ============================================================================
+
+-- Trigger to create user record when auth user is created
+-- This ensures user record exists even before email verification
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+COMMENT ON TRIGGER on_auth_user_created ON auth.users IS 'Creates user profile automatically when new auth user is created';
+
 -- ============================================================================
 -- COMPLETION MESSAGE
 -- ============================================================================
@@ -398,10 +442,12 @@ BEGIN
   RAISE NOTICE '📊 Tables: brands, boiler_models, fault_codes, resolution_steps, plans, users, analytics_events';
   RAISE NOTICE '🌍 Bilingual support: JSONB columns with en/tr keys';
   RAISE NOTICE '🔒 Row Level Security: Enabled on all tables';
-  RAISE NOTICE '🔧 Functions: increment_user_quota';
+  RAISE NOTICE '🔧 Functions: increment_user_quota, handle_new_user';
+  RAISE NOTICE '⚡ Triggers: on_auth_user_created (auto-creates user profile)';
   RAISE NOTICE '📈 Next steps:';
-  RAISE NOTICE '   1. Enable Supabase Auth in dashboard';
-  RAISE NOTICE '   2. Migrate mock data to Supabase (yarn db:import)';
-  RAISE NOTICE '   3. Test authentication flow';
+  RAISE NOTICE '   1. Enable Supabase Auth in dashboard (Settings > Authentication)';
+  RAISE NOTICE '   2. Configure email templates (optional)';
+  RAISE NOTICE '   3. Migrate mock data to Supabase (yarn db:import)';
+  RAISE NOTICE '   4. Test registration and email verification flow';
 END $$;
 
