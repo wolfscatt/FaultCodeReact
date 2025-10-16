@@ -23,12 +23,14 @@ import FaultCodeCard from '@components/FaultCodeCard';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
+import {useTheme} from '@theme/useTheme';
 
 type Props = SearchStackScreenProps<'SearchHome'>;
 
 export default function SearchHomeScreen({navigation}: Props) {
   const {t} = useTranslation();
   const language = usePrefsStore(state => state.language); // Subscribe to language changes
+  const {colors: themedColors} = useTheme();
   const [query, setQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string | undefined>(undefined);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -132,32 +134,124 @@ export default function SearchHomeScreen({navigation}: Props) {
 
   const selectedBrandName = brands.find(b => b.id === selectedBrand)?.name;
 
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: themedColors.background,
+    },
+    searchContainer: {
+      padding: spacing.md,
+      backgroundColor: themedColors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: themedColors.border,
+    },
+    searchInput: {
+      backgroundColor: themedColors.background,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+      marginBottom: spacing.sm,
+    },
+    filterButton: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: themedColors.background,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+    },
+    filterButtonText: {
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+    },
+    filterIcon: {
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+    },
+    brandPicker: {
+      backgroundColor: themedColors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: themedColors.border,
+      maxHeight: 300,
+    },
+    brandOption: {
+      padding: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: themedColors.border,
+    },
+    brandOptionText: {
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+    },
+    resultsCount: {
+      padding: spacing.md,
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+    },
+    emptyTitle: {
+      fontSize: typography.sizes.lg,
+      fontWeight: typography.weights.semibold,
+      color: themedColors.text,
+      marginBottom: spacing.xs,
+    },
+    emptyText: {
+      fontSize: typography.sizes.base,
+      color: themedColors.textSecondary,
+      textAlign: 'center',
+    },
+    emptyDescription: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+      textAlign: 'center',
+    },
+  });
+
+  const staticStyles = StyleSheet.create({
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: spacing.xxl,
+    },
+    emptyIcon: {
+      fontSize: 64,
+      marginBottom: spacing.md,
+    },
+  });
+
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
+    <View style={dynamicStyles.container}>
+      <View style={dynamicStyles.searchContainer}>
         <TextInput
-          style={styles.searchInput}
+          style={dynamicStyles.searchInput}
           placeholder={t('search.placeholder')}
           value={query}
           onChangeText={setQuery}
-          placeholderTextColor={colors.gray[400]}
+          placeholderTextColor={themedColors.textSecondary}
           autoCapitalize="none"
           autoCorrect={false}
         />
         <TouchableOpacity
-          style={styles.filterButton}
+          style={dynamicStyles.filterButton}
           onPress={() => setShowBrandPicker(!showBrandPicker)}>
-          <Text style={styles.filterButtonText}>
+          <Text style={dynamicStyles.filterButtonText}>
             {selectedBrandName || t('search.brandFilter')}
           </Text>
-          <Text style={styles.filterIcon}>▼</Text>
+          <Text style={dynamicStyles.filterIcon}>▼</Text>
         </TouchableOpacity>
       </View>
 
       {renderBrandPicker()}
 
       {results.length > 0 && (
-        <Text style={styles.resultsCount}>
+        <Text style={dynamicStyles.resultsCount}>
           {t('search.resultsCount', {count: results.length})}
         </Text>
       )}
@@ -168,95 +262,10 @@ export default function SearchHomeScreen({navigation}: Props) {
         renderItem={({item}) => (
           <FaultCodeCard fault={item} onPress={() => handleFaultPress(item.id)} />
         )}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={staticStyles.listContent}
         ListEmptyComponent={renderEmptyState}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.gray[50],
-  },
-  searchContainer: {
-    padding: spacing.md,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-  },
-  searchInput: {
-    backgroundColor: colors.gray[100],
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: typography.sizes.base,
-    color: colors.gray[900],
-    marginBottom: spacing.sm,
-  },
-  filterButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: colors.gray[100],
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-  },
-  filterButtonText: {
-    fontSize: typography.sizes.base,
-    color: colors.gray[700],
-  },
-  filterIcon: {
-    fontSize: typography.sizes.xs,
-    color: colors.gray[500],
-  },
-  brandPicker: {
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-    maxHeight: 300,
-  },
-  brandOption: {
-    padding: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
-  },
-  brandOptionText: {
-    fontSize: typography.sizes.base,
-    color: colors.gray[900],
-  },
-  resultsCount: {
-    padding: spacing.md,
-    fontSize: typography.sizes.sm,
-    color: colors.gray[600],
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: spacing.md,
-  },
-  emptyTitle: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.gray[900],
-    marginBottom: spacing.xs,
-  },
-  emptyText: {
-    fontSize: typography.sizes.base,
-    color: colors.gray[600],
-    textAlign: 'center',
-  },
-  emptyDescription: {
-    fontSize: typography.sizes.sm,
-    color: colors.gray[500],
-    textAlign: 'center',
-  },
-});
 

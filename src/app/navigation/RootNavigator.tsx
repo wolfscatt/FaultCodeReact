@@ -5,10 +5,12 @@
 
 import React from 'react';
 import {View, ActivityIndicator} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {RootStackParamList} from './types';
 import {useUserStore} from '@state/useUserStore';
+import {useTheme} from '@theme/useTheme';
+import {colors} from '@theme/tokens';
 import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -19,21 +21,60 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const {isInitialized, isLoggedIn} = useUserStore();
+  const {theme, colors: themedColors} = useTheme();
+
+  // Create navigation theme based on current theme
+  const navigationTheme = theme === 'dark' 
+    ? {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          primary: colors.primary[600],
+          background: themedColors.background,
+          card: themedColors.surface,
+          text: themedColors.text,
+          border: themedColors.border,
+        },
+      }
+    : {
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          primary: colors.primary[600],
+          background: themedColors.background,
+          card: themedColors.surface,
+          text: themedColors.text,
+          border: themedColors.border,
+        },
+      };
 
   // Show loading screen while checking for existing session
   if (!isInitialized) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff'}}>
-        <ActivityIndicator size="large" color="#3B82F6" />
+      <View style={{
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: themedColors.background
+      }}>
+        <ActivityIndicator size="large" color={colors.primary[600]} />
       </View>
     );
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          headerStyle: {
+            backgroundColor: themedColors.surface,
+            borderBottomColor: themedColors.border,
+          },
+          headerTintColor: themedColors.text,
+          headerTitleStyle: {
+            color: themedColors.text,
+          },
         }}
         initialRouteName={isLoggedIn ? 'MainTabs' : 'MainTabs'}>
         {/* Auth Screens */}

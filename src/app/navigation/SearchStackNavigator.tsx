@@ -8,18 +8,26 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {SearchStackParamList} from './types';
 import SearchHomeScreen from '../screens/SearchHomeScreen';
 import FaultDetailScreen from '../screens/FaultDetailScreen';
+import {useTheme} from '@theme/useTheme';
 
 const Stack = createStackNavigator<SearchStackParamList>();
 
 export default function SearchStackNavigator() {
+  const {colors: themedColors} = useTheme();
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: themedColors.surface,
+          borderBottomColor: themedColors.border,
+          borderBottomWidth: 1,
         },
-        headerTintColor: '#111827',
+        headerTintColor: themedColors.text,
+        headerTitleStyle: {
+          color: themedColors.text,
+        },
       }}>
       <Stack.Screen
         name="SearchHome"

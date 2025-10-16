@@ -10,18 +10,25 @@ import SearchStackNavigator from './SearchStackNavigator';
 import SettingsScreen from '../screens/SettingsScreen';
 import {useTranslation} from 'react-i18next';
 import {Text} from 'react-native';
+import {useTheme} from '@theme/useTheme';
+import {colors} from '@theme/tokens';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
 export default function MainTabNavigator() {
   const {t} = useTranslation();
+  const {colors: themedColors} = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#2563eb',
-        tabBarInactiveTintColor: '#9ca3af',
+        tabBarActiveTintColor: colors.primary[600],
+        tabBarInactiveTintColor: themedColors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: themedColors.surface,
+          borderTopColor: themedColors.border,
+        },
       }}>
       <Tab.Screen
         name="SearchTab"

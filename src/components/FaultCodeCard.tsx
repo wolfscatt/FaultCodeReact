@@ -7,6 +7,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {FaultCode} from '@data/types';
 import {colors, spacing, borderRadius, typography, shadows} from '@theme/tokens';
+import {useTheme} from '@theme/useTheme';
 
 type Props = {
   fault: FaultCode;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export default function FaultCodeCard({fault, onPress}: Props) {
+  const {colors: themedColors} = useTheme();
+  
   const severityColor =
     fault.severity === 'critical'
       ? colors.severity.critical
@@ -21,18 +24,46 @@ export default function FaultCodeCard({fault, onPress}: Props) {
       ? colors.severity.warning
       : colors.severity.info;
 
+  const dynamicStyles = StyleSheet.create({
+    card: {
+      backgroundColor: themedColors.surface,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+      ...shadows.md,
+    },
+    code: {
+      fontSize: typography.sizes.lg,
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+    },
+    title: {
+      fontSize: typography.sizes.base,
+      fontWeight: typography.weights.semibold,
+      color: themedColors.text,
+      marginBottom: spacing.xs,
+    },
+    summary: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+      lineHeight: 20,
+    },
+  });
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={dynamicStyles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
-        <Text style={styles.code}>{fault.code}</Text>
+        <Text style={dynamicStyles.code}>{fault.code}</Text>
         <View style={[styles.badge, {backgroundColor: severityColor}]}>
           <Text style={styles.badgeText}>{fault.severity}</Text>
         </View>
       </View>
-      <Text style={styles.title} numberOfLines={2}>
+      <Text style={dynamicStyles.title} numberOfLines={2}>
         {fault.title}
       </Text>
-      <Text style={styles.summary} numberOfLines={3}>
+      <Text style={dynamicStyles.summary} numberOfLines={3}>
         {fault.summary}
       </Text>
     </TouchableOpacity>
@@ -40,23 +71,11 @@ export default function FaultCodeCard({fault, onPress}: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-    ...shadows.md,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.sm,
-  },
-  code: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
-    color: colors.gray[900],
   },
   badge: {
     paddingHorizontal: spacing.sm,
@@ -68,17 +87,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.semibold,
     color: '#ffffff',
     textTransform: 'uppercase',
-  },
-  title: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    color: colors.gray[900],
-    marginBottom: spacing.xs,
-  },
-  summary: {
-    fontSize: typography.sizes.sm,
-    color: colors.gray[600],
-    lineHeight: 20,
   },
 });
 
