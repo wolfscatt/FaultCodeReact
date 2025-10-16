@@ -103,8 +103,8 @@ describe('FaultDetailScreen', () => {
 
     await waitFor(
       () => {
-        // Check for image placeholder text
-        const placeholders = getAllByText(/image coming soon/i);
+        // Check for image placeholder text (translation key)
+        const placeholders = getAllByText('fault.imageComingSoon');
         expect(placeholders.length).toBeGreaterThan(0);
       },
       {timeout: 3000},

@@ -61,6 +61,14 @@ describe('FaultDetailScreen - Quota Gating', () => {
   });
 
   it('should navigate to Paywall when free quota exceeded', async () => {
+    // Reset to free plan and set today's date to prevent auto-reset
+    const today = new Date().toISOString().split('T')[0];
+    useUserStore.setState({
+      plan: 'free',
+      dailyQuotaUsed: 0,
+      lastResetDate: today,
+    });
+
     // Set quota to limit (10)
     const store = useUserStore.getState();
     for (let i = 0; i < 10; i++) {
@@ -68,7 +76,7 @@ describe('FaultDetailScreen - Quota Gating', () => {
     }
 
     // Verify quota is at limit
-    expect(store.dailyQuotaUsed).toBe(10);
+    expect(useUserStore.getState().dailyQuotaUsed).toBe(10);
 
     // Try to view fault detail
     render(<FaultDetailScreen navigation={mockNavigation} route={mockRoute} />);

@@ -1,9 +1,9 @@
 # FaultCode - Boiler Fault Code Assistant
 
-[![CI](https://github.com/YOUR_USERNAME/FaultCode/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/FaultCode/actions/workflows/ci.yml)
+[![CI](https://github.com/wolfscatt/FaultCodeReact/actions/workflows/ci.yml/badge.svg)](https://github.com/wolfscatt/FaultCodeReact/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue.svg)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.73.6-blue.svg)](https://reactnative.dev/)
-[![Tests](https://img.shields.io/badge/tests-116%2F118%20passing-success.svg)](https://github.com/YOUR_USERNAME/FaultCode/actions)
+[![Tests](https://img.shields.io/badge/tests-116%2F118%20passing-success.svg)](https://github.com/wolfscatt/FaultCodeReact/actions)
 
 A production-grade React Native mobile application that helps users diagnose and resolve boiler/combi fault codes. Built with TypeScript, featuring a modern architecture with mock data for MVP.
 
