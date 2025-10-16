@@ -30,15 +30,22 @@ dotenv.config();
 
 // Validate environment variables
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('❌ Error: SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env file');
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ Error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in .env file');
+  console.error('💡 Tip: Get your service_role key from Supabase Dashboard → Project Settings → API');
+  console.error('⚠️  WARNING: The service_role key bypasses RLS. Keep it secret and never commit it!');
   process.exit(1);
 }
 
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client with service_role key (bypasses RLS)
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
 
 // Types matching mock data structure
 interface MockBrand {

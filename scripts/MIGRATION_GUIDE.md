@@ -18,7 +18,14 @@ This guide explains how to migrate your mock JSON data to Supabase with automati
    # Add to .env file:
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_ANON_KEY=your-anon-key-here
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
    ```
+   
+   **Important:** 
+   - Get both keys from: Supabase Dashboard → Project Settings → API
+   - `SUPABASE_ANON_KEY` - For app usage (public, read-only via RLS)
+   - `SUPABASE_SERVICE_ROLE_KEY` - For migration script (bypasses RLS)
+   - ⚠️ **Never commit or expose the service_role key!**
 
 3. **Run Migration**
    ```bash
@@ -237,6 +244,12 @@ LIMIT 10;
 - Check `.env` file has correct credentials
 - Verify Supabase project is active
 - Check internet connection
+
+### Error: "row violates row-level security policy"
+- You're using `SUPABASE_ANON_KEY` instead of `SUPABASE_SERVICE_ROLE_KEY`
+- Get service_role key from: Dashboard → Project Settings → API → service_role (secret)
+- Update `.env` with `SUPABASE_SERVICE_ROLE_KEY=...`
+- The service_role key bypasses RLS policies for admin operations
 
 ### Error: "Insert failed"
 - Ensure schema is created (run `setupSupabaseTables.sql`)
