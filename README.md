@@ -270,10 +270,20 @@ When limit is reached, users are redirected to the Paywall screen.
 
 ## 💾 Data Strategy
 
-### Current Approach (MVP - Mock Data)
-This project currently uses **100% mock data** stored in JSON files (`src/data/mock/`). The app works fully offline with no network calls.
+### Flexible Data Layer (Mock + Supabase)
+This project uses a **smart repository layer** that automatically switches between Supabase and mock data:
 
-**Supabase is configured but not yet active**. The infrastructure is ready - when you're ready to migrate, simply update the repository implementations to use the Supabase client.
+**With Supabase configured:**
+- Fetches data from Supabase with bilingual support (EN/TR)
+- Automatically falls back to mock data if Supabase fails
+- Provides full translation based on user language preference
+
+**Without Supabase:**
+- Uses local mock JSON files (works 100% offline)
+- No network calls, instant responses
+- Perfect for development and testing
+
+**Key benefit:** Your app works offline AND online with the same code!
 
 **Advantages**:
 - Fast development without backend dependency

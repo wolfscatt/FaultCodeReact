@@ -1,52 +1,47 @@
 /**
  * Brand Repository
  * Handles brand data access with search capabilities
+ * 
+ * This is the main entry point for brand data.
+ * By default, it uses Supabase with automatic fallback to mock data.
+ * 
+ * To force mock data (for testing), import from './brandRepo.mock' instead.
  */
 
 import {Brand} from '../types';
-import brandsData from '../mock/brands.json';
-import {normalizeSearch, delay} from '@utils/index';
+import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
 
-// Simulate network delay for realistic mock behavior
-const MOCK_DELAY_MS = 150;
+// Check if Supabase is configured
+const USE_SUPABASE = SUPABASE_URL && SUPABASE_ANON_KEY;
+
+// Import appropriate repository based on configuration
+let brandRepo: {
+  searchBrands: (query: string) => Promise<Brand[]>;
+  getBrandById: (id: string) => Promise<Brand | null>;
+  getAllBrands: () => Promise<Brand[]>;
+};
+
+if (USE_SUPABASE) {
+  // Use Supabase repository (with fallback to mock)
+  brandRepo = require('./supabase/brandRepo.supabase');
+} else {
+  // Use mock repository directly
+  brandRepo = require('./brandRepo.mock');
+}
 
 /**
  * Searches brands by name or alias
  * Returns brands matching the query (case-insensitive)
  */
-export async function searchBrands(query: string): Promise<Brand[]> {
-  await delay(MOCK_DELAY_MS);
-
-  if (!query.trim()) {
-    return brandsData as Brand[];
-  }
-
-  const normalizedQuery = normalizeSearch(query);
-
-  return (brandsData as Brand[]).filter(brand => {
-    const nameMatch = normalizeSearch(brand.name).includes(normalizedQuery);
-    const aliasMatch = brand.aliases?.some(alias =>
-      normalizeSearch(alias).includes(normalizedQuery),
-    );
-    return nameMatch || aliasMatch;
-  });
-}
+export const searchBrands = brandRepo.searchBrands;
 
 /**
  * Gets a brand by ID
  */
-export async function getBrandById(id: string): Promise<Brand | null> {
-  await delay(MOCK_DELAY_MS);
-
-  const brand = (brandsData as Brand[]).find(b => b.id === id);
-  return brand || null;
-}
+export const getBrandById = brandRepo.getBrandById;
 
 /**
  * Gets all brands (for dropdowns, etc.)
  */
-export async function getAllBrands(): Promise<Brand[]> {
-  await delay(MOCK_DELAY_MS);
-  return brandsData as Brand[];
-}
+export const getAllBrands = brandRepo.getAllBrands;
 
