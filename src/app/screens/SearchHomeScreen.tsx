@@ -76,64 +76,9 @@ export default function SearchHomeScreen({navigation}: Props) {
     navigation.navigate('FaultDetail', {faultId});
   };
 
-  const renderBrandPicker = () => {
-    if (!showBrandPicker) return null;
-
-    return (
-      <View style={styles.brandPicker}>
-        <TouchableOpacity
-          style={styles.brandOption}
-          onPress={() => {
-            setSelectedBrand(undefined);
-            setShowBrandPicker(false);
-          }}>
-          <Text style={styles.brandOptionText}>{t('search.allBrands')}</Text>
-        </TouchableOpacity>
-        {brands.map(brand => (
-          <TouchableOpacity
-            key={brand.id}
-            style={styles.brandOption}
-            onPress={() => {
-              setSelectedBrand(brand.id);
-              setShowBrandPicker(false);
-            }}>
-            <Text style={styles.brandOptionText}>{brand.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
-
-  const renderEmptyState = () => {
-    if (loading) {
-      return (
-        <View style={styles.emptyState}>
-          <ActivityIndicator size="large" color={colors.primary[600]} />
-          <Text style={styles.emptyText}>{t('search.searching')}</Text>
-        </View>
-      );
-    }
-
-    if (query.trim() === '' && !selectedBrand) {
-      return (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>🔍</Text>
-          <Text style={styles.emptyText}>Start searching for fault codes</Text>
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.emptyState}>
-        <Text style={styles.emptyIcon}>🤷</Text>
-        <Text style={styles.emptyTitle}>{t('search.noResults')}</Text>
-        <Text style={styles.emptyDescription}>{t('search.noResultsDesc')}</Text>
-      </View>
-    );
-  };
-
   const selectedBrandName = brands.find(b => b.id === selectedBrand)?.name;
 
+  // Create dynamic styles based on current theme
   const dynamicStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -225,6 +170,63 @@ export default function SearchHomeScreen({navigation}: Props) {
       marginBottom: spacing.md,
     },
   });
+
+  // Render functions (defined after styles so they can use them)
+  const renderBrandPicker = () => {
+    if (!showBrandPicker) return null;
+
+    return (
+      <View style={dynamicStyles.brandPicker}>
+        <TouchableOpacity
+          style={dynamicStyles.brandOption}
+          onPress={() => {
+            setSelectedBrand(undefined);
+            setShowBrandPicker(false);
+          }}>
+          <Text style={dynamicStyles.brandOptionText}>{t('search.allBrands')}</Text>
+        </TouchableOpacity>
+        {brands.map(brand => (
+          <TouchableOpacity
+            key={brand.id}
+            style={dynamicStyles.brandOption}
+            onPress={() => {
+              setSelectedBrand(brand.id);
+              setShowBrandPicker(false);
+            }}>
+            <Text style={dynamicStyles.brandOptionText}>{brand.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
+  const renderEmptyState = () => {
+    if (loading) {
+      return (
+        <View style={staticStyles.emptyState}>
+          <ActivityIndicator size="large" color={colors.primary[600]} />
+          <Text style={dynamicStyles.emptyText}>{t('search.searching')}</Text>
+        </View>
+      );
+    }
+
+    if (query.trim() === '' && !selectedBrand) {
+      return (
+        <View style={staticStyles.emptyState}>
+          <Text style={staticStyles.emptyIcon}>🔍</Text>
+          <Text style={dynamicStyles.emptyText}>Start searching for fault codes</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={staticStyles.emptyState}>
+        <Text style={staticStyles.emptyIcon}>🤷</Text>
+        <Text style={dynamicStyles.emptyTitle}>{t('search.noResults')}</Text>
+        <Text style={dynamicStyles.emptyDescription}>{t('search.noResultsDesc')}</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={dynamicStyles.container}>
