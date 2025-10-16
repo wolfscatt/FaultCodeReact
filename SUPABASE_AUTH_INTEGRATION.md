@@ -276,16 +276,19 @@ SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
-### 4. Apply Database Trigger Migration
+### 4. Add Service Role Key
 
-**Important:** Run the migration to enable automatic user profile creation:
+**Important:** Add your Supabase service role key to `.env`:
 
-```sql
--- Run this in Supabase SQL Editor
--- Copy from: scripts/migrations/001_add_user_trigger.sql
+1. Go to **Supabase Dashboard** → **Settings** → **API**
+2. Copy the **service_role** key (under "Project API keys")
+3. Add to `.env`:
+
+```env
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-This creates a database trigger that automatically creates user profiles when new auth users are created, even before email verification.
+⚠️ **Security:** The service role key bypasses Row Level Security. Keep it secret and never commit to version control!
 
 ### 5. Test Authentication
 
@@ -334,22 +337,39 @@ By default, Supabase requires email verification for new users. The app handles 
    - App loads user profile (already exists from trigger)
    - User is logged in successfully
 
-### Database Trigger
+### Code-Based User Profile Creation
 
-The `on_auth_user_created` trigger ensures user profiles are created immediately when auth users are created:
+User profiles are created in application code using the **service role key**, which bypasses RLS policies:
 
-```sql
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
+**`src/lib/supabase.ts`:**
+```typescript
+// Admin client with service role key (bypasses RLS)
+export const supabaseAdmin = createClient(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
+```
+
+**`src/lib/auth.ts`:**
+```typescript
+export const createUserRecord = async (userId: string) => {
+  // Uses supabaseAdmin to bypass RLS
+  await supabaseAdmin.from('users').insert({
+    id: userId,
+    plan_id: freePlan.id,
+    daily_quota_used: 0,
+    preferences: { language: 'en', theme: 'light' },
+  });
+};
 ```
 
 **Benefits:**
 - ✅ No "Failed to create user profile" errors
 - ✅ Works even before email verification
-- ✅ Bypasses RLS policies using `SECURITY DEFINER`
+- ✅ Bypasses RLS policies using service role key
 - ✅ Assigns default free plan automatically
+- ✅ No database triggers required (portable solution)
 
 ### Customizing Email Templates
 
@@ -375,7 +395,13 @@ CREATE TRIGGER on_auth_user_created
 
 **Issue:** Registration fails with "Failed to create user profile"
 
-**Solution:** Run the migration script `scripts/migrations/001_add_user_trigger.sql`
+**Solutions:**
+1. Verify `SUPABASE_SERVICE_ROLE_KEY` is in `.env`
+2. Restart Metro bundler: `yarn start --reset-cache`
+3. Check if free plan exists in database:
+   ```sql
+   SELECT * FROM plans WHERE name = 'free';
+   ```
 
 **Issue:** No verification email received
 
@@ -386,11 +412,14 @@ CREATE TRIGGER on_auth_user_created
 
 **Issue:** User created but no profile in users table
 
-**Solution:** Verify the trigger exists:
-```sql
-SELECT * FROM information_schema.triggers 
-WHERE trigger_name = 'on_auth_user_created';
-```
+**Solutions:**
+1. Check if service role key is configured correctly
+2. Verify `createUserRecord()` is being called after signup
+3. Check console logs for errors
+4. Manually verify in Supabase:
+   ```sql
+   SELECT * FROM users WHERE id = 'user-id-here';
+   ```
 
 For detailed troubleshooting, see: `EMAIL_VERIFICATION_FIX.md`
 

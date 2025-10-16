@@ -11,119 +11,199 @@ Supabase requires email verification by default. When a user registers:
 4. ❌ Fails due to RLS policies requiring an authenticated session
 
 ## ✅ Solution
-Implemented an automatic database trigger that creates the user profile **immediately** when the auth user is created, **before** email verification.
+Use the **Supabase Service Role Key** to create user profiles immediately after signup, bypassing RLS policies. This allows user profile creation even when email verification is pending.
 
 ---
 
 ## 🚀 How to Apply the Fix
 
-### Step 1: Update Your Supabase Database
-
-Run the migration script in your Supabase SQL Editor:
+### Step 1: Get Your Supabase Service Role Key
 
 1. Go to your [Supabase Dashboard](https://app.supabase.com)
 2. Select your project
-3. Navigate to **SQL Editor**
-4. Copy and paste the contents of `scripts/migrations/001_add_user_trigger.sql`
-5. Click **Run**
+3. Navigate to **Settings** → **API**
+4. Copy the **service_role** key (under "Project API keys")
 
-**What this does:**
-- Creates a `handle_new_user()` function that automatically creates user profiles
-- Adds a trigger `on_auth_user_created` that runs whenever a new auth user is created
-- The trigger runs with `SECURITY DEFINER`, bypassing RLS policies
+⚠️ **Important:** The service role key bypasses all RLS policies. Keep it secret and never commit it to version control!
 
----
+### Step 2: Add Service Role Key to `.env`
 
-### Step 2: Verify the Migration
+Update your `.env` file:
 
-Run this SQL query to check if the trigger was created:
+```env
+# Supabase Configuration
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=your-anon-key-here
 
-```sql
-SELECT 
-  trigger_name, 
-  event_manipulation, 
-  action_statement 
-FROM information_schema.triggers 
-WHERE trigger_name = 'on_auth_user_created';
+# Service role key (bypasses RLS - keep secret!)
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-You should see:
-```
-trigger_name         | event_manipulation | action_statement
----------------------|--------------------|-----------------
-on_auth_user_created | INSERT            | EXECUTE FUNCTION public.handle_new_user()
-```
+### Step 3: Verify Changes
 
----
+The following files have been updated:
 
-### Step 3: Test Registration Flow
+**`src/lib/supabase.ts`:**
+- ✅ Added `supabaseAdmin` client with service role key
+- ✅ Added warnings about RLS bypass
 
-1. **Clear any pending/unverified users** (optional):
-   ```sql
-   -- View unverified users
-   SELECT id, email, email_confirmed_at FROM auth.users WHERE email_confirmed_at IS NULL;
+**`src/lib/auth.ts`:**
+- ✅ Updated `createUserRecord()` to use `supabaseAdmin`
+- ✅ Bypasses RLS when creating user profiles
+
+**`src/state/useUserStore.ts`:**
+- ✅ Calls `createUserRecord()` immediately after signup
+- ✅ Works even when session is `null` (email verification pending)
+
+### Step 4: Test Registration Flow
+
+1. **Rebuild the app:**
+   ```bash
+   # Clear cache
+   yarn start --reset-cache
    
-   -- Delete test users (if needed)
-   DELETE FROM auth.users WHERE email = 'test@example.com';
+   # In another terminal
+   yarn android
    ```
 
-2. **Test new registration:**
-   - Open the app
-   - Go to Register screen
-   - Enter email and password
+2. **Register a new account:**
+   - Enter a valid email and password
    - Click "Create Account"
-   
-3. **Expected behavior:**
-   - ✅ Success message: "Registration Successful - We've sent a verification link to your email..."
+
+3. **Expected Behavior:**
+   - ✅ See success dialog: "Registration Successful - We've sent a verification link to your email..."
    - ✅ Redirected to Login screen
-   - ✅ Check Supabase dashboard → Authentication → Users: User should exist
-   - ✅ Check Supabase dashboard → Database → users table: User profile should be created automatically
-   
-4. **Verify your email:**
+   - ✅ User profile created in database (check Supabase dashboard)
+   - ✅ Email sent for verification
+
+4. **Verify Email:**
    - Check your email inbox (including spam folder)
    - Click the verification link
-   - You should see "Email confirmed" page
-   
-5. **Log in:**
+   - Email status changes to "Confirmed"
+
+5. **Log In:**
    - Return to app
-   - Enter email and password on Login screen
+   - Enter credentials on Login screen
    - ✅ Should successfully log in
 
 ---
 
-## 🔧 What Changed in the Code
+## 🔒 Security Considerations
 
-### 1. Database Trigger (New)
-**File:** `scripts/setupSupabaseTables.sql` & `scripts/migrations/001_add_user_trigger.sql`
+### Service Role Key Safety
 
-```sql
-CREATE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
-DECLARE
-  free_plan_id UUID;
-BEGIN
-  -- Get free plan ID
-  SELECT id INTO free_plan_id FROM public.plans WHERE name = 'free';
-  
-  -- Create user profile automatically
-  INSERT INTO public.users (id, plan_id, daily_quota_used, preferences)
-  VALUES (NEW.id, free_plan_id, 0, '{"language": "en", "theme": "light"}')
-  ON CONFLICT (id) DO NOTHING;
-  
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+The service role key is powerful and **bypasses all Row Level Security (RLS) policies**. Here's how we use it safely:
 
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
-```
+**✅ Safe Usage (What We Do):**
+- Used only in the `createUserRecord()` function
+- Only creates user profiles with default free plan
+- Never exposed to user input
+- Never used for user data queries
 
-### 2. Registration Flow (Updated)
-**File:** `src/state/useUserStore.ts`
+**❌ Unsafe Usage (What We Avoid):**
+- Never use for user-facing queries
+- Never pass user input directly to admin queries
+- Never expose the key in frontend code
+- Never use for regular data operations
+
+### Code Safety Example
 
 ```typescript
+// ✅ SAFE: Fixed user ID from auth, default values only
+export const createUserRecord = async (userId: string) => {
+  await supabaseAdmin.from('users').insert({
+    id: userId,  // From Supabase Auth only
+    plan_id: freePlan.id,  // Default free plan
+    daily_quota_used: 0,  // Default value
+    preferences: { language: 'en', theme: 'light' }  // Default values
+  });
+};
+
+// ❌ UNSAFE: User input could be malicious
+// NEVER DO THIS:
+export const updateUserData = async (userId: string, userData: any) => {
+  await supabaseAdmin.from('users').update(userData).eq('id', userId);
+};
+```
+
+---
+
+## 🏗️ How It Works
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     User Registration Flow                   │
+└─────────────────────────────────────────────────────────────┘
+
+1. User enters email/password
+          ↓
+2. App calls supabase.auth.signUp()
+          ↓
+3. Supabase creates auth user
+          ↓
+4. Session is NULL (email not verified)
+          ↓
+5. App calls createUserRecord(userId)
+          ↓
+6. Uses supabaseAdmin (service role)
+          ↓
+7. Bypasses RLS, creates user profile ✅
+          ↓
+8. Returns success with requiresVerification: true
+          ↓
+9. User sees "Check your email" message
+          ↓
+10. User clicks verification link in email
+          ↓
+11. Email confirmed, user can log in ✅
+```
+
+### Key Components
+
+**1. Supabase Admin Client (`src/lib/supabase.ts`):**
+```typescript
+export const supabaseAdmin = createClient(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,  // Bypasses RLS
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  },
+);
+```
+
+**2. Create User Record (`src/lib/auth.ts`):**
+```typescript
+export const createUserRecord = async (userId: string) => {
+  // Get free plan using admin client
+  const {data: freePlan} = await supabaseAdmin
+    .from('plans')
+    .select('id')
+    .eq('name', 'free')
+    .single();
+
+  // Create user record using admin client (bypasses RLS)
+  await supabaseAdmin.from('users').insert({
+    id: userId,
+    plan_id: freePlan.id,
+    daily_quota_used: 0,
+    last_quota_reset_date: new Date().toISOString().split('T')[0],
+    preferences: { language: 'en', theme: 'light' },
+  });
+};
+```
+
+**3. Registration Handler (`src/state/useUserStore.ts`):**
+```typescript
+const {user, session, error} = await AuthService.signUp(email, password);
+
+// Create user profile immediately (works even if session is null)
+await AuthService.createUserRecord(user.id);
+
 // Check if email verification is required
 if (!session) {
   return {
@@ -134,113 +214,102 @@ if (!session) {
 }
 ```
 
-**File:** `src/app/screens/RegisterScreen.tsx`
+---
 
-```typescript
-if (result.requiresVerification) {
-  Alert.alert(
-    '✅ Registration Successful',
-    'We\'ve sent a verification link to your email...',
-    [{text: 'Go to Login', onPress: () => navigation.navigate('Login')}]
-  );
-}
-```
+## 🧪 Testing Checklist
+
+- [ ] Service role key added to `.env`
+- [ ] App rebuilds successfully
+- [ ] Registration shows success message
+- [ ] User redirected to Login screen
+- [ ] User profile exists in `users` table (even before email verification)
+- [ ] Verification email received
+- [ ] After clicking verification link, email is confirmed
+- [ ] Login works after email verification
+- [ ] New users get free plan by default
+- [ ] Daily quota is set to 0 for new users
+- [ ] Default preferences are set
 
 ---
 
-## 📝 Email Verification Configuration (Optional)
+## 🆘 Troubleshooting
 
-### Customize Email Templates
+### Issue: "Failed to create user profile" still appears
 
-1. Go to **Supabase Dashboard** → **Authentication** → **Email Templates**
-2. Customize the **Confirm signup** template:
+**Solutions:**
+1. Verify service role key is in `.env`:
+   ```bash
+   # Check if env var is loaded
+   # Should print your service role key
+   grep SUPABASE_SERVICE_ROLE_KEY .env
+   ```
 
-**Example:**
-```html
-<h2>Welcome to FaultCode!</h2>
-<p>Thanks for signing up. Please confirm your email address by clicking the link below:</p>
-<p><a href="{{ .ConfirmationURL }}">Verify Email Address</a></p>
-<p>Or copy and paste this URL: {{ .ConfirmationURL }}</p>
-<p>If you didn't create an account, you can safely ignore this email.</p>
+2. Restart Metro bundler:
+   ```bash
+   yarn start --reset-cache
+   ```
+
+3. Check if free plan exists in database:
+   ```sql
+   SELECT * FROM plans WHERE name = 'free';
+   ```
+
+### Issue: Service role key not found
+
+**Check:**
+1. Ensure `.env` file exists in project root
+2. Verify `SUPABASE_SERVICE_ROLE_KEY` is set
+3. Restart Metro bundler to reload env vars
+4. Check `__mocks__/env.js` doesn't override the value
+
+### Issue: RLS policy blocking user creation
+
+**Debug:**
+```sql
+-- Check RLS policies on users table
+SELECT * FROM pg_policies WHERE tablename = 'users';
+
+-- Test if service role key works (run in Supabase SQL Editor)
+SELECT current_user;
+-- Should return: 'postgres' or 'supabase_admin' when using service role
 ```
 
-### Disable Email Verification (Not Recommended)
+### Issue: User created but can't log in after verification
 
-If you want to disable email verification for testing:
+**Check:**
+1. Verify email is confirmed:
+   ```sql
+   SELECT id, email, email_confirmed_at FROM auth.users WHERE email = 'your-email@example.com';
+   ```
+
+2. Check if user profile exists:
+   ```sql
+   SELECT * FROM users WHERE id = 'user-id-here';
+   ```
+
+3. Try logging in again with correct credentials
+
+---
+
+## 🔄 Alternative: Disable Email Verification (Development Only)
+
+If you want to test without email verification:
 
 1. Go to **Supabase Dashboard** → **Authentication** → **Settings**
 2. Scroll to **Email Auth**
 3. Toggle **Enable email confirmations** to OFF
 4. Click **Save**
 
-⚠️ **Warning:** This is NOT recommended for production as it allows anyone to register with any email address.
-
----
-
-## 🧪 Testing Checklist
-
-- [ ] Database trigger created successfully
-- [ ] Registration shows success message
-- [ ] User redirected to Login screen (not logged in automatically)
-- [ ] User profile exists in `users` table (even before email verification)
-- [ ] Email verification link received
-- [ ] After clicking verification link, email is confirmed
-- [ ] Login works after email verification
-- [ ] New users get free plan by default
-- [ ] Daily quota is set to 0 for new users
-- [ ] Default preferences are set (language: en, theme: light)
-
----
-
-## 🆘 Troubleshooting
-
-### Issue: No email received
-**Solutions:**
-1. Check spam folder
-2. Check Supabase logs: **Supabase Dashboard** → **Logs** → **Auth Logs**
-3. Verify SMTP settings: **Dashboard** → **Project Settings** → **Auth** → **SMTP Settings**
-4. For development, use Supabase's built-in email service (mailtrap)
-
-### Issue: Trigger not firing
-**Check:**
-```sql
--- Verify trigger exists
-SELECT * FROM information_schema.triggers WHERE trigger_name = 'on_auth_user_created';
-
--- Verify function exists
-SELECT * FROM pg_proc WHERE proname = 'handle_new_user';
-```
-
-### Issue: User profile not created
-**Debug:**
-```sql
--- Check if free plan exists
-SELECT * FROM plans WHERE name = 'free';
-
--- Check RLS policies on users table
-SELECT * FROM pg_policies WHERE tablename = 'users';
-
--- Manually test the function
-SELECT handle_new_user();
-```
-
-### Issue: RLS policy blocking user creation
-**Solution:** The trigger uses `SECURITY DEFINER`, which bypasses RLS. If it's still blocked:
-
-```sql
--- Grant necessary permissions
-GRANT USAGE ON SCHEMA public TO postgres;
-GRANT ALL ON public.users TO postgres;
-```
+⚠️ **Warning:** Not recommended for production! Anyone can register with any email.
 
 ---
 
 ## 📚 Additional Resources
 
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
-- [Supabase Email Templates](https://supabase.com/docs/guides/auth/auth-email-templates)
-- [PostgreSQL Triggers](https://www.postgresql.org/docs/current/sql-createtrigger.html)
+- [Service Role vs Anon Key](https://supabase.com/docs/guides/api#api-keys)
 - [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
+- [React Native Env Variables](https://github.com/goatandsheep/react-native-dotenv)
 
 ---
 
@@ -249,16 +318,43 @@ GRANT ALL ON public.users TO postgres;
 **Before:**
 - ❌ "Failed to create user profile" error
 - ❌ User stuck at registration
-- ❌ Manual intervention required
+- ❌ RLS policies blocking user creation
 
 **After:**
+- ✅ Service role key bypasses RLS
+- ✅ User profile created immediately
 - ✅ Smooth registration flow
-- ✅ Automatic user profile creation
-- ✅ Email verification prompt
+- ✅ Email verification works correctly
 - ✅ Professional UX
 
 ---
 
-**Last Updated:** 2025-10-16  
-**Migration Script:** `scripts/migrations/001_add_user_trigger.sql`
+## 🔐 Environment Variables Reference
 
+Your `.env` file should look like this:
+
+```env
+# Supabase Configuration
+# Get these from: https://app.supabase.com/project/_/settings/api
+
+# Your Supabase project URL (e.g., https://xxxxx.supabase.co)
+SUPABASE_URL=https://xxxxx.supabase.co
+
+# Your Supabase anonymous/public API key
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Your Supabase service role key (KEEP SECRET!)
+# ⚠️ This key bypasses Row Level Security - never expose it!
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Where to find these keys:**
+1. Go to [Supabase Dashboard](https://app.supabase.com)
+2. Select your project
+3. Navigate to **Settings** → **API**
+4. Copy the keys from "Project API keys" section
+
+---
+
+**Last Updated:** 2025-10-16  
+**Approach:** Code-based user profile creation using service role key

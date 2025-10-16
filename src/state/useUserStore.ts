@@ -157,6 +157,23 @@ export const useUserStore = create<UserState>()(
           };
         }
 
+        // Create user record in database using admin client (bypasses RLS)
+        // This works even when email verification is pending (session is null)
+        const {success, error: createError} = await AuthService.createUserRecord(
+          user.id,
+        );
+
+        if (!success) {
+          set(state => {
+            state.isLoading = false;
+          });
+          console.error('Failed to create user profile:', createError);
+          return {
+            success: false,
+            error: createError?.message || 'Failed to create user profile',
+          };
+        }
+
         // Check if email verification is required (session will be null)
         if (!session) {
           set(state => {
@@ -169,22 +186,7 @@ export const useUserStore = create<UserState>()(
           };
         }
 
-        // If we have a session, create user record in database
-        const {success, error: createError} = await AuthService.createUserRecord(
-          user.id,
-        );
-
-        if (!success) {
-          set(state => {
-            state.isLoading = false;
-          });
-          return {
-            success: false,
-            error: createError?.message || 'Failed to create user profile',
-          };
-        }
-
-        // Load user data from database
+        // If we have a session (email verification disabled), log the user in
         await get().loadUserData(user.id);
 
         set(state => {

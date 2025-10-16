@@ -4,7 +4,7 @@
  * Provides authentication methods and user management
  */
 
-import {supabase} from './supabase';
+import {supabase, supabaseAdmin} from './supabase';
 import {User, Session, AuthError} from '@supabase/supabase-js';
 
 export type AuthUser = User;
@@ -167,23 +167,31 @@ export const getUserData = async (
 /**
  * Create user record in users table after signup
  * This should be called after successful auth signup
+ * 
+ * Uses supabaseAdmin (service role) to bypass RLS policies
+ * This allows user profile creation even when the user's email is not yet verified
  */
 export const createUserRecord = async (
   userId: string,
 ): Promise<{success: boolean; error: any}> => {
   try {
-    // Get the free plan ID
-    const {data: freePlan} = await supabase
+    // Get the free plan ID using admin client
+    const {data: freePlan, error: planError} = await supabaseAdmin
       .from('plans')
       .select('id')
       .eq('name', 'free')
       .single();
 
-    if (!freePlan) {
-      return {success: false, error: new Error('Free plan not found')};
+    if (planError || !freePlan) {
+      console.error('Error fetching free plan:', planError);
+      return {
+        success: false,
+        error: planError || new Error('Free plan not found'),
+      };
     }
 
-    const {error} = await supabase.from('users').insert({
+    // Create user record using admin client (bypasses RLS)
+    const {error} = await supabaseAdmin.from('users').insert({
       id: userId,
       plan_id: freePlan.id,
       daily_quota_used: 0,
@@ -195,6 +203,7 @@ export const createUserRecord = async (
     });
 
     if (error) {
+      console.error('Error creating user record:', error);
       return {success: false, error};
     }
 

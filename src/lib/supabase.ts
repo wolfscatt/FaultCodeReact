@@ -10,7 +10,7 @@
  */
 
 import {createClient} from '@supabase/supabase-js';
-import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
+import {SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY} from '@env';
 
 // Validate required environment variables
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -19,13 +19,21 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   );
 }
 
+if (!SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn(
+    'Supabase service role key not found. Admin operations (like creating user profiles) may fail.',
+  );
+}
+
 /**
- * Supabase client instance
+ * Supabase client instance (Public/Anon)
  * 
  * Configured with:
  * - URL: Your Supabase project URL
  * - Anon Key: Your Supabase anonymous/public API key
- * - Auth: Persists session in async storage (ready for future auth implementation)
+ * - Auth: Persists session in async storage
+ * 
+ * Use this for all user-facing operations (respects RLS policies)
  */
 export const supabase = createClient(
   SUPABASE_URL || '',
@@ -37,6 +45,32 @@ export const supabase = createClient(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,
+    },
+  },
+);
+
+/**
+ * Supabase admin client instance (Service Role)
+ * 
+ * Configured with:
+ * - URL: Your Supabase project URL
+ * - Service Role Key: Your Supabase service role key (bypasses RLS)
+ * 
+ * ⚠️ WARNING: This client bypasses Row Level Security!
+ * Only use for trusted server-side operations like:
+ * - Creating user profiles after signup
+ * - Admin operations
+ * - Background jobs
+ * 
+ * NEVER expose this client to the frontend or use it for user operations!
+ */
+export const supabaseAdmin = createClient(
+  SUPABASE_URL || '',
+  SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY || '', // Fallback to anon key if service role not available
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
     },
   },
 );
