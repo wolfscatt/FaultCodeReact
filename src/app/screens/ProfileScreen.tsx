@@ -24,10 +24,11 @@ export default function ProfileScreen() {
     isLoggedIn,
     email,
     plan,
-    dailyQuotaUsed,
-    dailyQuotaLimit,
+    monthlyQuotaUsed,
+    monthlyQuotaLimit,
     logout,
     upgradeToPro,
+    isPremium,
   } = useUserStore();
 
   const handleLogout = () => {
@@ -137,21 +138,21 @@ export default function ProfileScreen() {
             {plan === 'free' && (
               <View className="mb-3">
                 <Text className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                  Daily Quota
+                  Monthly Quota
                 </Text>
                 <Text className="text-lg text-gray-900 dark:text-white">
-                  {dailyQuotaUsed} / {dailyQuotaLimit} faults viewed today
+                  {monthlyQuotaUsed} / {monthlyQuotaLimit} faults viewed this month
                 </Text>
                 <View className="mt-2 h-2 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
                   <View
                     className={`h-full ${
-                      dailyQuotaUsed >= dailyQuotaLimit
+                      monthlyQuotaUsed >= monthlyQuotaLimit
                         ? 'bg-red-500'
                         : 'bg-blue-500'
                     }`}
                     style={{
                       width: `${Math.min(
-                        (dailyQuotaUsed / dailyQuotaLimit) * 100,
+                        (monthlyQuotaUsed / monthlyQuotaLimit) * 100,
                         100,
                       )}%`,
                     }}
@@ -176,6 +177,9 @@ export default function ProfileScreen() {
                   ✓ Unlimited fault details
                 </Text>
                 <Text className="text-green-600 dark:text-green-400 font-medium">
+                  ✓ Save favorites
+                </Text>
+                <Text className="text-green-600 dark:text-green-400 font-medium">
                   ✓ Advanced search
                 </Text>
                 <Text className="text-green-600 dark:text-green-400 font-medium">
@@ -195,10 +199,10 @@ export default function ProfileScreen() {
             <View className="flex-row justify-between">
               <View className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mr-2">
                 <Text className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                  Used Today
+                  Used This Month
                 </Text>
                 <Text className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {dailyQuotaUsed}
+                  {monthlyQuotaUsed}
                 </Text>
               </View>
               <View className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-4 ml-2">
@@ -206,10 +210,26 @@ export default function ProfileScreen() {
                   Remaining
                 </Text>
                 <Text className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {Math.max(0, dailyQuotaLimit - dailyQuotaUsed)}
+                  {Math.max(0, monthlyQuotaLimit - monthlyQuotaUsed)}
                 </Text>
               </View>
             </View>
+          </View>
+        )}
+
+        {/* Premium Features */}
+        {plan === 'pro' && (
+          <View className="mb-6">
+            <Text className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              Premium Features
+            </Text>
+            <TouchableOpacity
+              className="bg-yellow-500 py-4 rounded-lg mb-3"
+              onPress={() => navigation.navigate('Favorites')}>
+              <Text className="text-gray-900 text-center font-semibold text-lg">
+                ⭐ My Favorites
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
 
