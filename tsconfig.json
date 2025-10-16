@@ -26,7 +26,8 @@
       "@state/*": ["src/state/*"],
       "@theme/*": ["src/theme/*"],
       "@i18n/*": ["src/i18n/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@lib/*": ["src/lib/*"]
     }
   },
   "include": ["src/**/*", "index.js", "App.tsx"],

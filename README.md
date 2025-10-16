@@ -93,7 +93,12 @@ FaultCode/
 │   │
 │   ├── state/                  # Zustand stores
 │   │   ├── useUserStore.ts     # User, plan, quota
-│   │   └── usePrefsStore.ts    # Language, theme, settings
+│   │   ├── usePrefsStore.ts    # Language, theme, settings
+│   │   └── useAnalyticsStore.ts # Analytics tracking
+│   │
+│   ├── lib/                    # External integrations
+│   │   ├── supabase.ts         # Supabase client
+│   │   └── env.d.ts            # Environment types
 │   │
 │   ├── theme/                  # Design tokens & theming
 │   │   ├── tokens.ts           # Colors, spacing, typography
@@ -136,12 +141,21 @@ FaultCode/
    cd FaultCode
    ```
 
-2. **Install dependencies**
+2. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your Supabase credentials
+   # Get them from https://app.supabase.com → Project Settings → API
+   ```
+
+   **Note**: The app currently uses mock data, so Supabase credentials are optional. You can leave the `.env` file with empty values for now.
+
+3. **Install dependencies**
    ```bash
    yarn install
    ```
 
-3. **Install iOS pods** (macOS only)
+4. **Install iOS pods** (macOS only)
    ```bash
    cd ios && pod install && cd ..
    ```
@@ -249,10 +263,12 @@ When limit is reached, users are redirected to the Paywall screen.
 
 ---
 
-## 💾 Mock Data Strategy
+## 💾 Data Strategy
 
-### Current Approach (MVP)
-This project uses **100% mock data** stored in JSON files (`src/data/mock/`). No network calls are made.
+### Current Approach (MVP - Mock Data)
+This project currently uses **100% mock data** stored in JSON files (`src/data/mock/`). The app works fully offline with no network calls.
+
+**Supabase is configured but not yet active**. The infrastructure is ready - when you're ready to migrate, simply update the repository implementations to use the Supabase client.
 
 **Advantages**:
 - Fast development without backend dependency
@@ -266,9 +282,15 @@ This project uses **100% mock data** stored in JSON files (`src/data/mock/`). No
 - `fault_codes.json` - 50+ real fault codes
 - `steps.json` - 2-6 resolution steps per fault
 
-### Migrating to Real API
+### Migrating to Supabase
 
-When ready to connect to a backend, update only the repository files. The UI layer remains unchanged.
+When ready to migrate from mock data to Supabase, update only the repository files. The UI layer remains unchanged.
+
+**Prerequisites**:
+1. Create a Supabase project at https://app.supabase.com
+2. Set up your database tables (brands, models, fault_codes, steps)
+3. Add your credentials to `.env` file
+4. Update repository implementations
 
 **Step 1: Update Repository Implementation**
 ```typescript
@@ -280,11 +302,16 @@ export const searchFaults = async (params) => {
   return faults.filter(...);
 };
 
-// After (real API):
-import axios from 'axios';
+// After (Supabase):
+import { supabase } from '@lib/supabase';
 
 export const searchFaults = async (params) => {
-  const { data } = await axios.get('/api/faults', { params });
+  const { data, error } = await supabase
+    .from('fault_codes')
+    .select('*')
+    .ilike('code', `%${params.q}%`);
+  
+  if (error) throw error;
   return data;
 };
 ```
@@ -325,13 +352,15 @@ try {
 ```
 
 **Migration Checklist**:
-- [ ] Set up backend API endpoints
-- [ ] Update repository implementations
+- [ ] Create Supabase project and get credentials
+- [ ] Configure `.env` with SUPABASE_URL and SUPABASE_ANON_KEY
+- [ ] Create database tables matching your types
+- [ ] Update repository implementations to use Supabase client
 - [ ] Add error handling for network failures  
 - [ ] Implement loading states
 - [ ] Enable React Query caching
 - [ ] Keep mock data for tests
-- [ ] Test with slow network conditions
+- [ ] Test with slow/offline network conditions
 
 ---
 

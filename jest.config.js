@@ -18,6 +18,8 @@ module.exports = {
     '^@theme/(.*)$': '<rootDir>/src/theme/$1',
     '^@i18n/(.*)$': '<rootDir>/src/i18n/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@lib/(.*)$': '<rootDir>/src/lib/$1',
+    '^@env$': '<rootDir>/__mocks__/env.js',
   },
   testMatch: ['**/__tests__/**/*.(test|spec).(ts|tsx|js)', '**/*.(test|spec).(ts|tsx|js)'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
