@@ -11,6 +11,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import RootNavigator from './src/app/navigation/RootNavigator';
 import './src/i18n'; // Initialize i18n
 import {usePrefsStore} from './src/state/usePrefsStore';
+import {useUserStore} from './src/state/useUserStore';
 
 // Ignore specific warnings during development
 LogBox.ignoreLogs([
@@ -29,6 +30,12 @@ const queryClient = new QueryClient({
 
 function App(): React.JSX.Element {
   const theme = usePrefsStore(state => state.theme);
+  const initialize = useUserStore(state => state.initialize);
+
+  // Initialize auth on app start
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   // Set status bar style based on theme
   useEffect(() => {

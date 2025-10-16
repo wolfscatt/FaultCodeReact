@@ -7,10 +7,13 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import type {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import type {CompositeScreenProps} from '@react-navigation/native';
 
-// Root Stack (modals, etc.)
+// Root Stack (modals, auth, etc.)
 export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
   MainTabs: undefined;
   Paywall: undefined;
+  Profile: undefined;
 };
 
 // Main Bottom Tabs

@@ -6,18 +6,24 @@
 import React from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Switch} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
+import type {StackNavigationProp} from '@react-navigation/stack';
 import {usePrefsStore} from '@state/usePrefsStore';
 import {useUserStore} from '@state/useUserStore';
 import {useTheme} from '@theme/useTheme';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import i18n from '@i18n/index';
+import type {RootStackParamList} from '../navigation/types';
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export default function SettingsScreen() {
   const {t} = useTranslation();
+  const navigation = useNavigation<NavigationProp>();
   const {theme: currentTheme, colors: themedColors} = useTheme();
   const {language, theme, analyticsOptIn, setLanguage, toggleTheme, setAnalyticsOptIn} =
     usePrefsStore();
-  const {plan, downgradeToFree} = useUserStore();
+  const {plan, downgradeToFree, isLoggedIn, email} = useUserStore();
 
   const handleLanguageToggle = () => {
     const newLang = language === 'en' ? 'tr' : 'en';
@@ -83,8 +89,36 @@ export default function SettingsScreen() {
     },
   });
 
+  const goToProfile = () => {
+    navigation.navigate('Profile');
+  };
+
+  const goToLogin = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <ScrollView style={dynamicStyles.container}>
+      {/* Account */}
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>
+          {isLoggedIn ? 'Account' : 'Sign In'}
+        </Text>
+        <TouchableOpacity
+          style={styles.settingRow}
+          onPress={isLoggedIn ? goToProfile : goToLogin}>
+          <View style={styles.settingTextContainer}>
+            <Text style={dynamicStyles.settingLabel}>
+              {isLoggedIn ? 'Profile' : 'Sign In / Register'}
+            </Text>
+            {isLoggedIn && email && (
+              <Text style={dynamicStyles.settingDescription}>{email}</Text>
+            )}
+          </View>
+          <Text style={styles.settingValue}>→</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Language */}
       <View style={dynamicStyles.section}>
         <Text style={dynamicStyles.sectionTitle}>{t('settings.language')}</Text>

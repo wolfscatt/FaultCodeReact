@@ -355,6 +355,40 @@ COMMENT ON COLUMN resolution_steps.text IS 'Bilingual step instruction: {"en": "
 COMMENT ON COLUMN resolution_steps.tools IS 'Bilingual tools array: {"en": ["..."], "tr": ["..."]}';
 
 -- ============================================================================
+-- FUNCTIONS
+-- ============================================================================
+
+-- Function to increment user quota
+-- Called when a user views a fault detail
+CREATE OR REPLACE FUNCTION increment_user_quota(user_id UUID)
+RETURNS VOID AS $$
+DECLARE
+  current_date DATE := CURRENT_DATE;
+  last_reset DATE;
+BEGIN
+  -- Get the last reset date
+  SELECT last_quota_reset_date INTO last_reset
+  FROM users
+  WHERE id = user_id;
+  
+  -- If it's a new day, reset the quota
+  IF last_reset IS NULL OR last_reset < current_date THEN
+    UPDATE users
+    SET daily_quota_used = 1,
+        last_quota_reset_date = current_date
+    WHERE id = user_id;
+  ELSE
+    -- Increment the quota
+    UPDATE users
+    SET daily_quota_used = daily_quota_used + 1
+    WHERE id = user_id;
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+COMMENT ON FUNCTION increment_user_quota IS 'Increments user daily quota, resetting if new day';
+
+-- ============================================================================
 -- COMPLETION MESSAGE
 -- ============================================================================
 
@@ -364,9 +398,10 @@ BEGIN
   RAISE NOTICE '📊 Tables: brands, boiler_models, fault_codes, resolution_steps, plans, users, analytics_events';
   RAISE NOTICE '🌍 Bilingual support: JSONB columns with en/tr keys';
   RAISE NOTICE '🔒 Row Level Security: Enabled on all tables';
+  RAISE NOTICE '🔧 Functions: increment_user_quota';
   RAISE NOTICE '📈 Next steps:';
-  RAISE NOTICE '   1. Configure RLS policies for your auth setup';
-  RAISE NOTICE '   2. Migrate mock data to Supabase';
-  RAISE NOTICE '   3. Update repository implementations to use Supabase client';
+  RAISE NOTICE '   1. Enable Supabase Auth in dashboard';
+  RAISE NOTICE '   2. Migrate mock data to Supabase (yarn db:import)';
+  RAISE NOTICE '   3. Test authentication flow';
 END $$;
 
