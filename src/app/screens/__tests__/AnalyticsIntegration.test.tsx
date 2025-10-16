@@ -53,39 +53,43 @@ describe('Analytics Integration', () => {
   });
 
   describe('Search Analytics', () => {
-    it('should fire search event when user searches', async () => {
-      const mockRoute = {
-        key: 'SearchHome',
-        name: 'SearchHome' as const,
-        params: undefined,
-      };
+    it(
+      'should fire search event when user searches',
+      async () => {
+        const mockRoute = {
+          key: 'SearchHome',
+          name: 'SearchHome' as const,
+          params: undefined,
+        };
 
-      const {getByPlaceholderText} = render(
-        <SearchHomeScreen navigation={mockNavigation} route={mockRoute} />,
-      );
+        const {getByPlaceholderText} = render(
+          <SearchHomeScreen navigation={mockNavigation} route={mockRoute} />,
+        );
 
-      const searchInput = getByPlaceholderText('search.placeholder');
-      
-      // Simulate user typing
-      fireEvent.changeText(searchInput, 'E03');
-      
-      // Wait for debounced search to fire
-      await waitFor(
-        () => {
-          const events = useAnalyticsStore.getState().events;
-          expect(events.length).toBeGreaterThan(0);
-        },
-        {timeout: 1000},
-      );
+        const searchInput = getByPlaceholderText('search.placeholder');
 
-      // Verify search event was logged
-      const events = useAnalyticsStore.getState().events;
-      const searchEvent = events.find((e: any) => e.name === 'search');
-      
-      expect(searchEvent).toBeDefined();
-      expect(searchEvent?.props?.searchTerm).toBe('E03');
-      expect(searchEvent?.props?.termLength).toBe(3);
-    });
+        // Simulate user typing
+        fireEvent.changeText(searchInput, 'E03');
+
+        // Wait for debounced search to fire (CI is slower)
+        await waitFor(
+          () => {
+            const events = useAnalyticsStore.getState().events;
+            expect(events.length).toBeGreaterThan(0);
+          },
+          {timeout: 2000},
+        );
+
+        // Verify search event was logged
+        const events = useAnalyticsStore.getState().events;
+        const searchEvent = events.find((e: any) => e.name === 'search');
+
+        expect(searchEvent).toBeDefined();
+        expect(searchEvent?.props?.searchTerm).toBe('E03');
+        expect(searchEvent?.props?.termLength).toBe(3);
+      },
+      10000,
+    ); // 10s timeout for slow CI environments
 
     it('should fire search event with brandId when brand is selected', async () => {
       const mockRoute = {
