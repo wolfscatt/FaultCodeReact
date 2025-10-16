@@ -21,6 +21,7 @@ import {getFaultById} from '@data/repo/faultRepo';
 import {FaultDetailResult} from '@data/types';
 import {useUserStore, useCanAccessContent} from '@state/useUserStore';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
+import {useTheme} from '@theme/useTheme';
 import {formatDate} from '@utils/index';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
@@ -31,6 +32,7 @@ export default function FaultDetailScreen({route, navigation}: Props) {
   const {faultId} = route.params;
   const {t} = useTranslation();
   const language = usePrefsStore(state => state.language);
+  const {colors: themedColors} = useTheme();
   const [data, setData] = useState<FaultDetailResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
@@ -77,6 +79,251 @@ export default function FaultDetailScreen({route, navigation}: Props) {
 
     loadData();
   }, [faultId, canAccess, plan, incrementQuota, checkAndResetQuota, navigation, language]);
+
+  // Create dynamic styles based on current theme
+  const styles = StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: themedColors.background,
+    },
+    loadingText: {
+      marginTop: spacing.md,
+      fontSize: typography.sizes.base,
+      color: themedColors.textSecondary,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: spacing.xl,
+      backgroundColor: themedColors.background,
+    },
+    errorText: {
+      fontSize: typography.sizes.lg,
+      color: colors.error,
+      textAlign: 'center',
+    },
+    container: {
+      flex: 1,
+      backgroundColor: themedColors.background,
+    },
+    content: {
+      paddingBottom: spacing.xl,
+    },
+    quotaBar: {
+      backgroundColor: colors.primary[100],
+      padding: spacing.sm,
+      alignItems: 'center',
+    },
+    quotaText: {
+      fontSize: typography.sizes.sm,
+      color: colors.primary[800],
+      fontWeight: typography.weights.semibold,
+    },
+    header: {
+      backgroundColor: themedColors.surface,
+      padding: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: themedColors.border,
+    },
+    headerTop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing.sm,
+    },
+    code: {
+      fontSize: typography.sizes['3xl'],
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+    },
+    severityBadge: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs,
+      borderRadius: borderRadius.md,
+    },
+    severityText: {
+      fontSize: typography.sizes.sm,
+      fontWeight: typography.weights.semibold,
+      color: '#ffffff',
+      textTransform: 'uppercase',
+    },
+    title: {
+      fontSize: typography.sizes.xl,
+      fontWeight: typography.weights.semibold,
+      color: themedColors.text,
+      marginBottom: spacing.xs,
+    },
+    verifiedDate: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+    },
+    safetyNotice: {
+      flexDirection: 'row',
+      backgroundColor: colors.warning,
+      padding: spacing.md,
+      margin: spacing.md,
+      borderRadius: borderRadius.md,
+      ...shadows.md,
+    },
+    safetyIcon: {
+      fontSize: 24,
+      marginRight: spacing.sm,
+    },
+    safetyTextContainer: {
+      flex: 1,
+    },
+    safetyTitle: {
+      fontSize: typography.sizes.base,
+      fontWeight: typography.weights.bold,
+      color: '#ffffff',
+      marginBottom: spacing.xs,
+    },
+    safetyText: {
+      fontSize: typography.sizes.sm,
+      color: '#ffffff',
+    },
+    section: {
+      backgroundColor: themedColors.surface,
+      padding: spacing.lg,
+      marginTop: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: themedColors.border,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing.md,
+    },
+    sectionTitle: {
+      fontSize: typography.sizes.lg,
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+      marginBottom: spacing.md,
+    },
+    bodyText: {
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+      lineHeight: 24,
+    },
+    listItem: {
+      flexDirection: 'row',
+      marginBottom: spacing.sm,
+    },
+    bullet: {
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+      marginRight: spacing.sm,
+    },
+    listItemText: {
+      flex: 1,
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+      lineHeight: 22,
+    },
+    actionButtons: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    actionButton: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      backgroundColor: themedColors.background,
+      borderRadius: borderRadius.sm,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+    },
+    actionButtonText: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.text,
+      fontWeight: typography.weights.medium,
+    },
+    step: {
+      backgroundColor: themedColors.background,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      borderRadius: borderRadius.md,
+      borderWidth: 1,
+      borderColor: themedColors.border,
+    },
+    stepHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: spacing.sm,
+    },
+    stepNumber: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.primary[600],
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: spacing.md,
+    },
+    stepNumberText: {
+      fontSize: typography.sizes.base,
+      fontWeight: typography.weights.bold,
+      color: '#ffffff',
+    },
+    stepMeta: {
+      flex: 1,
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    stepMetaText: {
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+    },
+    proRequired: {
+      color: colors.primary[600],
+      fontWeight: typography.weights.semibold,
+    },
+    stepText: {
+      fontSize: typography.sizes.base,
+      color: themedColors.text,
+      lineHeight: 22,
+      marginBottom: spacing.sm,
+    },
+    toolsContainer: {
+      flexDirection: 'row',
+      marginBottom: spacing.sm,
+    },
+    toolsLabel: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+      fontWeight: typography.weights.semibold,
+    },
+    toolsText: {
+      flex: 1,
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+    },
+    imagePlaceholder: {
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+      fontStyle: 'italic',
+      textAlign: 'center',
+      padding: spacing.sm,
+      backgroundColor: themedColors.background,
+      borderRadius: borderRadius.sm,
+    },
+    upgradeCTA: {
+      backgroundColor: colors.primary[600],
+      margin: spacing.md,
+      padding: spacing.lg,
+      borderRadius: borderRadius.md,
+      alignItems: 'center',
+      ...shadows.lg,
+    },
+    upgradeText: {
+      fontSize: typography.sizes.base,
+      fontWeight: typography.weights.semibold,
+      color: '#ffffff',
+    },
+  });
 
   if (loading) {
     return (
@@ -251,242 +498,4 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.gray[50],
-  },
-  content: {
-    paddingBottom: spacing.xl,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: spacing.md,
-    fontSize: typography.sizes.base,
-    color: colors.gray[600],
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  errorText: {
-    fontSize: typography.sizes.lg,
-    color: colors.error,
-    textAlign: 'center',
-  },
-  quotaBar: {
-    backgroundColor: colors.primary[100],
-    padding: spacing.sm,
-    alignItems: 'center',
-  },
-  quotaText: {
-    fontSize: typography.sizes.sm,
-    color: colors.primary[800],
-    fontWeight: typography.weights.semibold,
-  },
-  header: {
-    backgroundColor: '#ffffff',
-    padding: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  code: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.gray[900],
-  },
-  severityBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.md,
-  },
-  severityText: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold,
-    color: '#ffffff',
-    textTransform: 'uppercase',
-  },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
-    color: colors.gray[900],
-    marginBottom: spacing.xs,
-  },
-  verifiedDate: {
-    fontSize: typography.sizes.sm,
-    color: colors.gray[500],
-  },
-  safetyNotice: {
-    flexDirection: 'row',
-    backgroundColor: colors.warning,
-    padding: spacing.md,
-    margin: spacing.md,
-    borderRadius: borderRadius.md,
-    ...shadows.md,
-  },
-  safetyIcon: {
-    fontSize: 24,
-    marginRight: spacing.sm,
-  },
-  safetyTextContainer: {
-    flex: 1,
-  },
-  safetyTitle: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.bold,
-    color: '#ffffff',
-    marginBottom: spacing.xs,
-  },
-  safetyText: {
-    fontSize: typography.sizes.sm,
-    color: '#ffffff',
-    lineHeight: 20,
-  },
-  section: {
-    backgroundColor: '#ffffff',
-    padding: spacing.lg,
-    marginTop: spacing.md,
-    marginHorizontal: spacing.md,
-    borderRadius: borderRadius.md,
-    ...shadows.sm,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
-    color: colors.gray[900],
-    flex: 1,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-  },
-  actionButton: {
-    backgroundColor: colors.primary[100],
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.primary[300],
-  },
-  actionButtonText: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold,
-    color: colors.primary[700],
-  },
-  bodyText: {
-    fontSize: typography.sizes.base,
-    color: colors.gray[700],
-    lineHeight: 24,
-  },
-  listItem: {
-    flexDirection: 'row',
-    marginBottom: spacing.sm,
-  },
-  bullet: {
-    fontSize: typography.sizes.lg,
-    color: colors.primary[600],
-    marginRight: spacing.sm,
-    lineHeight: 24,
-  },
-  listItemText: {
-    flex: 1,
-    fontSize: typography.sizes.base,
-    color: colors.gray[700],
-    lineHeight: 24,
-  },
-  step: {
-    marginBottom: spacing.lg,
-    paddingBottom: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-  },
-  stepHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  stepNumber: {
-    width: 32,
-    height: 32,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.primary[600],
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  stepNumberText: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.bold,
-    color: '#ffffff',
-  },
-  stepMeta: {
-    flex: 1,
-  },
-  stepMetaText: {
-    fontSize: typography.sizes.xs,
-    color: colors.gray[600],
-  },
-  proRequired: {
-    color: colors.primary[600],
-    fontWeight: typography.weights.semibold,
-  },
-  stepText: {
-    fontSize: typography.sizes.base,
-    color: colors.gray[700],
-    lineHeight: 24,
-    marginBottom: spacing.sm,
-  },
-  toolsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: spacing.xs,
-  },
-  toolsLabel: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold,
-    color: colors.gray[600],
-  },
-  toolsText: {
-    fontSize: typography.sizes.sm,
-    color: colors.gray[600],
-  },
-  imagePlaceholder: {
-    fontSize: typography.sizes.sm,
-    color: colors.gray[400],
-    fontStyle: 'italic',
-    marginTop: spacing.xs,
-  },
-  upgradeCTA: {
-    backgroundColor: colors.primary[600],
-    margin: spacing.md,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    ...shadows.md,
-  },
-  upgradeText: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    color: '#ffffff',
-  },
-});
 
