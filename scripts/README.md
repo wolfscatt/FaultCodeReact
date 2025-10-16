@@ -63,29 +63,40 @@ Complete database schema for FaultCode app with **bilingual support** (English/T
 
 #### Migration from Mock Data
 
-After running the schema, you can migrate your mock JSON data:
+After running the schema, you can automatically migrate your mock JSON data using the import script:
 
-```javascript
-// Example: Migrate brands
+```bash
+# Run the automated import script
+yarn db:import
+```
+
+**What it does:**
+- Reads all mock data from `/src/data/mock/*.json`
+- Translates text fields to English + Turkish using a technical dictionary
+- Creates bilingual JSONB objects
+- Inserts data in correct order (brands → models → fault codes → steps)
+- Skips duplicates automatically
+- Reports detailed statistics
+
+**Manual Migration Example:**
+
+If you prefer manual control, you can use the Supabase client directly:
+
+```typescript
+// Example: Migrate a single brand
 import { supabase } from '@lib/supabase';
-import brandsData from '@data/mock/brands.json';
 
-const migrateBrands = async () => {
-  const billingualBrands = brandsData.map(brand => ({
-    name: {
-      en: brand.name,
-      tr: brand.name // Update with actual Turkish translations
-    },
-    aliases: brand.aliases,
-    country: brand.country
-  }));
-  
+const migrateSingleBrand = async () => {
   const { data, error } = await supabase
     .from('brands')
-    .insert(billingualBrands);
+    .insert({
+      name: { en: 'Vaillant', tr: 'Vaillant' },
+      aliases: ['Vaillant Group'],
+      country: 'Germany'
+    });
   
   if (error) console.error('Migration error:', error);
-  else console.log('Migrated brands:', data);
+  else console.log('Migrated brand:', data);
 };
 ```
 

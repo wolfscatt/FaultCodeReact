@@ -11,7 +11,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:import": "ts-node scripts/importMockToSupabase.ts"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "6.5.14",
@@ -45,12 +46,14 @@
     "@testing-library/jest-native": "5.4.3",
     "@testing-library/react-native": "12.2.1",
     "@types/jest": "29.5.5",
+    "@types/node": "18.18.0",
     "@types/react": "18.2.23",
     "@types/react-native-dotenv": "0.2.2",
     "@types/react-test-renderer": "18.0.1",
     "@typescript-eslint/eslint-plugin": "6.9.1",
     "@typescript-eslint/parser": "6.9.1",
     "babel-plugin-module-resolver": "5.0.0",
+    "dotenv": "16.3.1",
     "eslint": "8.52.0",
     "eslint-plugin-ft-flow": "2.0.3",
     "eslint-plugin-jest": "27.9.0",
@@ -58,6 +61,7 @@
     "prettier": "3.0.3",
     "react-native-dotenv": "3.4.9",
     "react-test-renderer": "18.2.0",
+    "ts-node": "10.9.1",
     "typescript": "5.2.2"
   },
   "engines": {

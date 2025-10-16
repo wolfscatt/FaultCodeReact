@@ -1,0 +1,7 @@
+# Ignore compiled JS files from TypeScript
+*.js
+*.js.map
+
+# Keep specific files if needed
+!jest.config.js
+

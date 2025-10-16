@@ -214,12 +214,13 @@ yarn type-check
 
 # Linting
 yarn lint
-
-# Fix linting issues
 yarn lint:fix
 
 # Format code
 yarn format
+
+# Database migration
+yarn db:import  # Import mock data to Supabase
 ```
 
 ## 🧪 Testing
