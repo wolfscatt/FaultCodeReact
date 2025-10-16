@@ -9,8 +9,8 @@ import {FaultCode, ResolutionStep, SearchFilters, FaultDetailResult, SeverityLev
 import {normalizeSearch} from '@utils/index';
 import {usePrefsStore} from '@state/usePrefsStore';
 
-// Fallback to mock data
-import * as mockFaultRepo from '../faultRepo';
+// Fallback to mock data - import directly from mock to avoid circular dependency
+import * as mockFaultRepo from '../faultRepo.mock';
 
 /**
  * Supabase fault code type (with bilingual JSONB fields)

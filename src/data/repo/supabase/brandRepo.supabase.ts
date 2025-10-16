@@ -9,8 +9,8 @@ import {Brand} from '../../types';
 import {normalizeSearch} from '@utils/index';
 import {usePrefsStore} from '@state/usePrefsStore';
 
-// Fallback to mock data
-import * as mockBrandRepo from '../brandRepo';
+// Fallback to mock data - import directly from mock to avoid circular dependency
+import * as mockBrandRepo from '../brandRepo.mock';
 
 /**
  * Supabase brand type (with bilingual JSONB fields)
