@@ -56,7 +56,7 @@ A production-grade React Native mobile application that helps users diagnose and
 - Prettier: 3.0.3
 
 ### Future Integration (Stubs)
-- Firebase Auth: 18.5.0
+- Supabase: 2.39.0
 - Google Mobile Ads: 11.7.0
 - In-App Purchases: 13.9.0
 
