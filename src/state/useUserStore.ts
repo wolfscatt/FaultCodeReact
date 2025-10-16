@@ -161,6 +161,7 @@ export const useUserStore = create<UserState>()(
         // This works even when email verification is pending (session is null)
         const {success, error: createError} = await AuthService.createUserRecord(
           user.id,
+          user.email || email, // Use user.email from auth, fallback to registration email
         );
 
         if (!success) {

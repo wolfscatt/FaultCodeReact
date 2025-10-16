@@ -173,6 +173,7 @@ export const getUserData = async (
  */
 export const createUserRecord = async (
   userId: string,
+  email: string,
 ): Promise<{success: boolean; error: any}> => {
   try {
     // Get the free plan ID using admin client
@@ -193,6 +194,7 @@ export const createUserRecord = async (
     // Create user record using admin client (bypasses RLS)
     const {error} = await supabaseAdmin.from('users').insert({
       id: userId,
+      email: email,
       plan_id: freePlan.id,
       daily_quota_used: 0,
       last_quota_reset_date: new Date().toISOString().split('T')[0],
