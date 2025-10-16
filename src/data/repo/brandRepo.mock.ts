@@ -1,11 +1,14 @@
 /**
  * Brand Repository - Mock Implementation
  * Pure mock data repository (no Supabase)
+ * Now supports bilingual data through on-the-fly translation
  */
 
 import {Brand} from '../types';
 import brandsData from '../mock/brands.json';
 import {normalizeSearch, delay} from '@utils/index';
+import {toBilingualBrand} from './bilingual';
+import {usePrefsStore} from '@state/usePrefsStore';
 
 // Simulate network delay for realistic mock behavior
 const MOCK_DELAY_MS = 150;
@@ -16,20 +19,22 @@ const MOCK_DELAY_MS = 150;
  */
 export async function searchBrands(query: string): Promise<Brand[]> {
   await delay(MOCK_DELAY_MS);
+  const language = usePrefsStore.getState().language;
 
-  if (!query.trim()) {
-    return brandsData as Brand[];
+  let brands = brandsData as Brand[];
+
+  if (query.trim()) {
+    const normalizedQuery = normalizeSearch(query);
+    brands = brands.filter(brand => {
+      const nameMatch = normalizeSearch(brand.name).includes(normalizedQuery);
+      const aliasMatch = brand.aliases?.some(alias =>
+        normalizeSearch(alias).includes(normalizedQuery),
+      );
+      return nameMatch || aliasMatch;
+    });
   }
 
-  const normalizedQuery = normalizeSearch(query);
-
-  return (brandsData as Brand[]).filter(brand => {
-    const nameMatch = normalizeSearch(brand.name).includes(normalizedQuery);
-    const aliasMatch = brand.aliases?.some(alias =>
-      normalizeSearch(alias).includes(normalizedQuery),
-    );
-    return nameMatch || aliasMatch;
-  });
+  return brands.map(brand => toBilingualBrand(brand, language));
 }
 
 /**
@@ -37,9 +42,10 @@ export async function searchBrands(query: string): Promise<Brand[]> {
  */
 export async function getBrandById(id: string): Promise<Brand | null> {
   await delay(MOCK_DELAY_MS);
+  const language = usePrefsStore.getState().language;
 
   const brand = (brandsData as Brand[]).find(b => b.id === id);
-  return brand || null;
+  return brand ? toBilingualBrand(brand, language) : null;
 }
 
 /**
@@ -47,6 +53,8 @@ export async function getBrandById(id: string): Promise<Brand | null> {
  */
 export async function getAllBrands(): Promise<Brand[]> {
   await delay(MOCK_DELAY_MS);
-  return brandsData as Brand[];
+  const language = usePrefsStore.getState().language;
+
+  return (brandsData as Brand[]).map(brand => toBilingualBrand(brand, language));
 }
 

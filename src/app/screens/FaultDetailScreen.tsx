@@ -23,12 +23,14 @@ import {useUserStore, useCanAccessContent} from '@state/useUserStore';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
 import {formatDate} from '@utils/index';
 import {analytics} from '@state/useAnalyticsStore';
+import {usePrefsStore} from '@state/usePrefsStore';
 
 type Props = SearchStackScreenProps<'FaultDetail'>;
 
 export default function FaultDetailScreen({route, navigation}: Props) {
   const {faultId} = route.params;
   const {t} = useTranslation();
+  const language = usePrefsStore(state => state.language);
   const [data, setData] = useState<FaultDetailResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);

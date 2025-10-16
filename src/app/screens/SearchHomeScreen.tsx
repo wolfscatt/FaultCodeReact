@@ -22,11 +22,13 @@ import {debounce} from '@utils/index';
 import FaultCodeCard from '@components/FaultCodeCard';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
+import {usePrefsStore} from '@state/usePrefsStore';
 
 type Props = SearchStackScreenProps<'SearchHome'>;
 
 export default function SearchHomeScreen({navigation}: Props) {
   const {t} = useTranslation();
+  const language = usePrefsStore(state => state.language); // Subscribe to language changes
   const [query, setQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string | undefined>(undefined);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -34,10 +36,10 @@ export default function SearchHomeScreen({navigation}: Props) {
   const [loading, setLoading] = useState(false);
   const [showBrandPicker, setShowBrandPicker] = useState(false);
 
-  // Load brands on mount
+  // Load brands on mount AND when language changes
   useEffect(() => {
     getAllBrands().then(setBrands);
-  }, []);
+  }, [language]); // Re-fetch when language changes
 
   // Debounced search function
   const performSearch = useCallback(
@@ -63,10 +65,10 @@ export default function SearchHomeScreen({navigation}: Props) {
     [],
   );
 
-  // Trigger search when query or brand changes
+  // Trigger search when query, brand, OR language changes
   useEffect(() => {
     performSearch(query, selectedBrand);
-  }, [query, selectedBrand, performSearch]);
+  }, [query, selectedBrand, language, performSearch]); // Re-search when language changes
 
   const handleFaultPress = (faultId: string) => {
     navigation.navigate('FaultDetail', {faultId});

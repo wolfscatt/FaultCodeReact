@@ -1,12 +1,15 @@
 /**
  * Fault Code Repository - Mock Implementation
  * Pure mock data repository (no Supabase)
+ * Now supports bilingual data through on-the-fly translation
  */
 
 import {FaultCode, ResolutionStep, SearchFilters, FaultDetailResult} from '../types';
 import faultCodesData from '../mock/fault_codes.json';
 import stepsData from '../mock/steps.json';
 import {normalizeSearch, delay} from '@utils/index';
+import {toBilingualFaultCode, toBilingualStep} from './bilingual';
+import {usePrefsStore} from '@state/usePrefsStore';
 
 const MOCK_DELAY_MS = 200;
 
@@ -16,6 +19,7 @@ const MOCK_DELAY_MS = 200;
  */
 export async function searchFaults(filters: SearchFilters): Promise<FaultCode[]> {
   await delay(MOCK_DELAY_MS);
+  const language = usePrefsStore.getState().language;
 
   let results = faultCodesData as FaultCode[];
 
@@ -72,7 +76,8 @@ export async function searchFaults(filters: SearchFilters): Promise<FaultCode[]>
       .map(item => item.fault);
   }
 
-  return results;
+  // Convert to bilingual format based on current language
+  return results.map(fault => toBilingualFaultCode(fault, language));
 }
 
 /**
@@ -80,6 +85,7 @@ export async function searchFaults(filters: SearchFilters): Promise<FaultCode[]>
  */
 export async function getFaultById(id: string): Promise<FaultDetailResult | null> {
   await delay(MOCK_DELAY_MS);
+  const language = usePrefsStore.getState().language;
 
   const fault = (faultCodesData as FaultCode[]).find(f => f.id === id);
   if (!fault) {
@@ -91,9 +97,10 @@ export async function getFaultById(id: string): Promise<FaultDetailResult | null
     .filter(step => step.faultCodeId === id)
     .sort((a, b) => a.order - b.order);
 
+  // Convert to bilingual format based on current language
   return {
-    fault,
-    steps,
+    fault: toBilingualFaultCode(fault, language),
+    steps: steps.map(step => toBilingualStep(step, language)),
   };
 }
 
@@ -103,6 +110,7 @@ export async function getFaultById(id: string): Promise<FaultDetailResult | null
  */
 export async function getRecentFaults(limit: number = 10): Promise<FaultCode[]> {
   await delay(MOCK_DELAY_MS);
+  const language = usePrefsStore.getState().language;
 
   // For now, return most recently verified faults
   const sorted = [...(faultCodesData as FaultCode[])].sort((a, b) => {
@@ -111,6 +119,7 @@ export async function getRecentFaults(limit: number = 10): Promise<FaultCode[]> 
     return dateB - dateA;
   });
 
-  return sorted.slice(0, limit);
+  // Convert to bilingual format based on current language
+  return sorted.slice(0, limit).map(fault => toBilingualFaultCode(fault, language));
 }
 
