@@ -576,6 +576,120 @@ yarn test        # Run tests with coverage
 
 The CI badge at the top of this README shows the current build status. Click it to see detailed workflow runs.
 
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### 1. "URL.hostname is not implemented" error
+
+**Symptom**: App crashes or shows blank screen with error about URL.hostname
+
+**Cause**: React Native doesn't have full URL API support which is required by Supabase
+
+**Solution**: This is already fixed with the `react-native-url-polyfill` package. Make sure:
+```bash
+# The polyfill is installed
+yarn install
+
+# The app is restarted with cache cleared
+yarn start --reset-cache
+```
+
+The polyfill is imported at the top of `index.js` before any other code.
+
+#### 2. "Maximum call stack size exceeded" error
+
+**Symptom**: Infinite recursion error when loading data
+
+**Cause**: Circular dependency in repository fallback logic
+
+**Solution**: This is already fixed. The Supabase repositories now import directly from `*.mock.ts` files instead of the index files to avoid circular dependencies.
+
+If you still see this:
+```bash
+# Clean all caches
+yarn start --reset-cache
+
+# On Android
+cd android && ./gradlew clean && cd ..
+
+# Rebuild
+yarn android
+```
+
+#### 3. Android build fails with "ninja: error: loading 'build.ninja'"
+
+**Symptom**: Build fails with CMake/ninja errors
+
+**Cause**: Corrupted native build cache
+
+**Solution**:
+```bash
+# Clean Android build
+cd android
+./gradlew clean
+cd ..
+
+# Rebuild
+yarn android
+```
+
+#### 4. Blank screen / No data loading
+
+**Symptom**: App shows empty lists or blank screens
+
+**Cause**: Either Supabase connection issue or fallback not working
+
+**Solution**:
+1. Check if `.env` file exists with valid Supabase credentials
+2. If you don't have Supabase set up, leave `.env` empty to use mock data
+3. Check Metro bundler for errors: `yarn start --reset-cache`
+4. Verify mock data files exist in `src/data/mock/`
+
+#### 5. "TypeError: Cannot read property 'language' of undefined"
+
+**Symptom**: Error accessing language preference
+
+**Cause**: Store not initialized before use
+
+**Solution**: Make sure `usePrefsStore` is initialized. The app should initialize it in `App.tsx`. If issue persists:
+```typescript
+// In your store usage
+const language = usePrefsStore.getState()?.language || 'en';
+```
+
+#### 6. Tests failing with act() warnings
+
+**Symptom**: Tests pass but show act() warnings
+
+**Cause**: React state updates not wrapped in act()
+
+**Solution**: This is already handled in `jest.setup.js` with:
+```javascript
+global.suppressActWarnings = true;
+```
+
+### General Debugging Tips
+
+```bash
+# Full clean rebuild
+rm -rf node_modules
+yarn install
+cd android && ./gradlew clean && cd ..
+yarn start --reset-cache
+# In another terminal
+yarn android
+
+# Check for type errors
+yarn type-check
+
+# Check for linting issues
+yarn lint
+
+# Run tests to verify everything works
+yarn test
+```
+
 ## 🐛 Known Limitations (MVP)
 
 - **Mock Data Only**: No real backend or network calls
