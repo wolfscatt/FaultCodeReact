@@ -19,7 +19,8 @@ import {useTheme} from '@theme/useTheme';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {useTranslation} from 'react-i18next';
 import {useUserStore} from '@state/useUserStore';
-import {getUserFavorites, removeFavorite, type FavoriteWithFault} from '@data/repo/favoritesRepo';
+import {listFavorites, removeFavorite} from '@data/repo/favoritesRepo';
+import {FaultCode} from '@data/types';
 import {fromBilingualText} from '@data/repo/bilingual';
 import {usePrefsStore} from '@state/usePrefsStore';
 import PaywallModal from '@components/PaywallModal';
@@ -34,7 +35,7 @@ export default function FavoritesScreen() {
   const {userId, isPremium, plan} = useUserStore();
   const {language} = usePrefsStore();
 
-  const [favorites, setFavorites] = useState<FavoriteWithFault[]>([]);
+  const [favorites, setFavorites] = useState<FaultCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -195,14 +196,8 @@ export default function FavoritesScreen() {
 
     try {
       setIsLoading(true);
-      const {data, error} = await getUserFavorites(userId);
-
-      if (error) {
-        console.error('Error loading favorites:', error);
-        Alert.alert('Error', 'Failed to load favorites');
-      } else {
-        setFavorites(data);
-      }
+      const favoritesList = await listFavorites(userId);
+      setFavorites(favoritesList);
     } catch (error) {
       console.error('Error loading favorites:', error);
       Alert.alert('Error', 'Failed to load favorites');
@@ -217,7 +212,7 @@ export default function FavoritesScreen() {
     setIsRefreshing(false);
   };
 
-  const handleRemoveFavorite = async (favoriteId: string, faultCodeId: string) => {
+  const handleRemoveFavorite = async (faultCodeId: string) => {
     if (!userId) return;
 
     Alert.alert(
@@ -230,11 +225,16 @@ export default function FavoritesScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              const {success, error} = await removeFavorite(userId, faultCodeId);
+              const {removed, error} = await removeFavorite(userId, faultCodeId);
 
-              if (success) {
-                setFavorites(prev => prev.filter(f => f.id !== favoriteId));
-              } else {
+              if (removed) {
+                setFavorites(prev => prev.filter(f => f.id !== faultCodeId));
+                Alert.alert(
+                  t('favorites.remove_success', 'Removed from favorites'),
+                  '',
+                  [{text: t('common.ok', 'OK')}],
+                );
+              } else if (error) {
                 console.error('Error removing favorite:', error);
                 Alert.alert('Error', 'Failed to remove favorite');
               }
@@ -327,9 +327,9 @@ export default function FavoritesScreen() {
         refreshing={isRefreshing}
         onRefresh={handleRefresh}
         renderItem={({item}) => {
-          const fault = item.faultCode;
-          const title = fromBilingualText(fault.title as any, language);
-          const summary = fromBilingualText(fault.summary as any, language);
+          const fault = item;
+          const title = fault.title;
+          const summary = fault.summary;
 
           return (
             <View style={styles.card}>
@@ -348,7 +348,7 @@ export default function FavoritesScreen() {
                 </View>
                 <TouchableOpacity
                   style={styles.removeButton}
-                  onPress={() => handleRemoveFavorite(item.id, fault.id)}>
+                  onPress={() => handleRemoveFavorite(fault.id)}>
                   <Text style={styles.removeIcon}>🗑️</Text>
                 </TouchableOpacity>
               </View>
@@ -361,9 +361,6 @@ export default function FavoritesScreen() {
               </Text>
 
               <View style={styles.footer}>
-                <Text style={styles.savedDate}>
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </Text>
                 <TouchableOpacity
                   style={styles.viewButton}
                   onPress={() => handleViewFault(fault.id)}>

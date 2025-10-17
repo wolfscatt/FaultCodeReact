@@ -714,6 +714,51 @@ yarn test
 - **No Offline Mode**: Though structure supports it
 - **Basic UI**: Production app should use a component library (e.g., React Native Paper)
 
+## 🔧 Troubleshooting
+
+### Favorites Not Working
+
+**Symptoms**: Favorites show "mock data used" error, nothing is saved, favorites screen is blank.
+
+**Root Causes & Solutions**:
+
+1. **Mock Data Fallback Issue**
+   - **Problem**: App is using mock fault IDs (fault_001) instead of Supabase UUIDs
+   - **Solution**: Ensure fault data comes from Supabase with proper UUIDs
+   - **Check**: Look for "Mock data detected" warnings in console
+
+2. **Authentication Issues**
+   - **Problem**: User not logged in or invalid user ID
+   - **Solution**: Verify user is logged in with valid Supabase Auth session
+   - **Check**: `useUserStore.getState().userId` should be a valid UUID
+
+3. **Premium Plan Issues**
+   - **Problem**: User has free plan but trying to access favorites
+   - **Solution**: Upgrade to Pro plan or check plan status
+   - **Check**: `useUserStore.getState().plan` should be 'pro'
+
+4. **Database Schema Issues**
+   - **Problem**: Missing favorites table or incorrect column names
+   - **Solution**: Run database migrations: `scripts/migrations/002_favorites_monthly_quota.sql`
+   - **Check**: Verify `favorites` table exists with correct columns
+
+5. **RLS Policy Issues**
+   - **Problem**: Row Level Security blocking favorites access
+   - **Solution**: Ensure RLS policies allow user to access their own favorites
+   - **Check**: Verify `auth.uid()` matches `user_id` in favorites table
+
+**Debug Steps**:
+1. Check console for "Mock data detected" warnings
+2. Verify user authentication status
+3. Confirm user has Pro plan
+4. Test Supabase connection and table access
+5. Check RLS policies in Supabase dashboard
+
+**Feature Flags**:
+- Set `USE_MOCK_FALLBACK=false` to disable mock fallback for favorites
+- Enable debug logs with `ENABLE_DEBUG_LOGS=true`
+- Check `src/config/featureFlags.ts` for configuration
+
 ## 📄 License
 
 This is a proprietary application. All rights reserved.

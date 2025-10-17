@@ -379,6 +379,13 @@ export default function FaultDetailScreen({route, navigation}: Props) {
       Alert.alert(
         t('favorites.login_required', 'Login Required'),
         t('favorites.login_message', 'Please login to save favorites'),
+        [
+          {text: t('common.cancel', 'Cancel'), style: 'cancel'},
+          {
+            text: t('common.login', 'Login'),
+            onPress: () => navigation.navigate('Login' as any),
+          },
+        ],
       );
       return;
     }
@@ -392,25 +399,40 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     try {
       if (isFavorite) {
         // Remove from favorites
-        const {success} = await removeFavorite(userId, faultId);
-        if (success) {
+        const {removed, error} = await removeFavorite(userId, faultId);
+        if (removed) {
           setIsFavorite(false);
           Alert.alert(
             t('favorites.remove_success', 'Removed from favorites'),
             '',
             [{text: t('common.ok', 'OK')}],
           );
+        } else if (error) {
+          console.error('Error removing favorite:', error);
+          Alert.alert(
+            t('common.error', 'Error'),
+            t('favorites.error', 'Failed to remove favorite'),
+          );
         }
       } else {
         // Add to favorites
-        const {success} = await addFavorite(userId, faultId);
-        if (success) {
+        const {created, error} = await addFavorite(userId, faultId);
+        if (created) {
           setIsFavorite(true);
           Alert.alert(
             t('favorites.add_success', 'Added to favorites'),
             '',
             [{text: t('common.ok', 'OK')}],
           );
+        } else if (error) {
+          console.error('Error adding favorite:', error);
+          Alert.alert(
+            t('common.error', 'Error'),
+            t('favorites.error', 'Failed to add favorite'),
+          );
+        } else {
+          // Already favorited (idempotent)
+          setIsFavorite(true);
         }
       }
     } catch (error) {
