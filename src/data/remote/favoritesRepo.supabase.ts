@@ -64,6 +64,19 @@ export async function addFavorite(
   try {
     console.log(`[Favorites] Adding favorite: user=${userId}, fault=${faultCodeId}`);
     
+    // Check if this is a valid UUID (Supabase format)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!faultCodeId.match(uuidRegex)) {
+      console.error(`[Favorites] Invalid fault ID format: ${faultCodeId}. Expected UUID format.`);
+      return {
+        created: false, 
+        error: {
+          code: 'INVALID_ID_FORMAT',
+          message: `Invalid fault ID format: ${faultCodeId}. Expected UUID format.`,
+        }
+      };
+    }
+    
     const {data, error} = await supabase
       .from('favorites')
       .insert({

@@ -21,11 +21,19 @@ try {
   const env = require('@env');
   SUPABASE_URL = env.SUPABASE_URL || '';
   SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
-} catch {
+  
+  // Debug logging
+  console.log('[FaultRepo] Environment check:', {
+    SUPABASE_URL: SUPABASE_URL ? 'SET' : 'NOT SET',
+    SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
+  });
+} catch (error) {
+  console.log('[FaultRepo] Environment import failed:', error);
   // Env vars not available (likely in tests), use mock data
 }
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+console.log('[FaultRepo] Using Supabase:', USE_SUPABASE);
 
 // Select appropriate repository based on configuration
 const faultRepo = USE_SUPABASE ? supabaseFaultRepo : mockFaultRepo;

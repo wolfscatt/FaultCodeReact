@@ -426,10 +426,19 @@ export default function FaultDetailScreen({route, navigation}: Props) {
           );
         } else if (error) {
           console.error('Error adding favorite:', error);
-          Alert.alert(
-            t('common.error', 'Error'),
-            t('favorites.error', 'Failed to add favorite'),
-          );
+          
+          // Check if it's an invalid ID format error
+          if (error.code === 'INVALID_ID_FORMAT') {
+            Alert.alert(
+              t('common.error', 'Error'),
+              'This fault code cannot be saved as a favorite. Please try again later.',
+            );
+          } else {
+            Alert.alert(
+              t('common.error', 'Error'),
+              t('favorites.error', 'Failed to add favorite'),
+            );
+          }
         } else {
           // Already favorited (idempotent)
           setIsFavorite(true);
