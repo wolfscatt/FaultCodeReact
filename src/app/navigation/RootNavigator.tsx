@@ -17,6 +17,8 @@ import RegisterScreen from '../screens/RegisterScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import PaywallScreen from '../screens/PaywallScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import AboutScreen from '../screens/AboutScreen';
+import ContactUsScreen from '../screens/ContactUsScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -124,6 +126,22 @@ export default function RootNavigator() {
             headerShown: true,
             headerTitle: 'Favorites',
             headerBackTitle: 'Back',
+          }}
+        />
+        <Stack.Screen
+          name="About"
+          component={AboutScreen}
+          options={{
+            presentation: 'card',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ContactUs"
+          component={ContactUsScreen}
+          options={{
+            presentation: 'card',
+            headerShown: false,
           }}
         />
       </Stack.Navigator>

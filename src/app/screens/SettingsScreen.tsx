@@ -194,6 +194,33 @@ export default function SettingsScreen() {
         )}
       </View>
 
+      {/* App Information */}
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>{t('settings.appInformation')}</Text>
+        <TouchableOpacity
+          style={styles.settingRow}
+          onPress={() => navigation.navigate('About')}>
+          <View style={styles.settingTextContainer}>
+            <Text style={dynamicStyles.settingLabel}>{t('settings.about')}</Text>
+            <Text style={dynamicStyles.settingDescription}>
+              {t('about.description')}
+            </Text>
+          </View>
+          <Text style={styles.settingValue}>ℹ️</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.settingRow}
+          onPress={() => navigation.navigate('ContactUs')}>
+          <View style={styles.settingTextContainer}>
+            <Text style={dynamicStyles.settingLabel}>{t('settings.contactUs')}</Text>
+            <Text style={dynamicStyles.settingDescription}>
+              {t('contactUs.subtitle')}
+            </Text>
+          </View>
+          <Text style={styles.settingValue}>📧</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* App Info */}
       <View style={styles.appInfo}>
         <Text style={dynamicStyles.appInfoText}>FaultCode v0.1.0</Text>
