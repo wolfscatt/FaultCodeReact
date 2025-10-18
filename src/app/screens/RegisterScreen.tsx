@@ -19,6 +19,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useUserStore} from '@state/useUserStore';
+import {useTheme} from '@theme/useTheme';
+import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -90,98 +92,94 @@ export default function RegisterScreen() {
     navigation.navigate('Login');
   };
 
-  // Create dynamic styles based on current theme - Modern design
+  // Create dynamic styles based on current theme
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#ffffff',
+      backgroundColor: themedColors.background,
     },
     scrollContent: {
       flexGrow: 1,
       justifyContent: 'center',
-      paddingHorizontal: 24,
+      paddingHorizontal: spacing.lg,
     },
     header: {
-      alignItems: 'center',
-      marginBottom: 48,
+      marginBottom: spacing.xl,
     },
     title: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: '#000000',
-      marginBottom: 8,
-      textAlign: 'center',
+      fontSize: typography.sizes['4xl'],
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
     },
     subtitle: {
-      fontSize: 14,
-      color: '#6B7280',
-      textAlign: 'center',
+      fontSize: typography.sizes.lg,
+      color: themedColors.textSecondary,
     },
     inputContainer: {
-      marginBottom: 16,
+      marginBottom: spacing.md,
     },
     inputContainerLarge: {
-      marginBottom: 24,
+      marginBottom: spacing.lg,
     },
     label: {
-      fontSize: 14,
-      fontWeight: '500',
-      color: '#000000',
-      marginBottom: 8,
+      fontSize: typography.sizes.sm,
+      fontWeight: typography.weights.medium,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
     },
     input: {
-      backgroundColor: '#ffffff',
-      color: '#000000',
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      borderRadius: 10,
+      backgroundColor: themedColors.background,
+      color: themedColors.text,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
       borderWidth: 1,
-      borderColor: '#E5E7EB',
-      fontSize: 16,
+      borderColor: themedColors.border,
+      fontSize: typography.sizes.base,
     },
     hint: {
-      fontSize: 12,
-      color: '#6B7280',
-      marginTop: 4,
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
+      marginTop: spacing.xs,
     },
     button: {
-      backgroundColor: '#3366FF',
-      paddingVertical: 16,
-      borderRadius: 10,
-      marginBottom: 24,
-      opacity: isLoading ? 0.7 : 1,
+      backgroundColor: colors.primary[600],
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
+      marginBottom: spacing.md,
+      opacity: isLoading ? 0.5 : 1,
     },
     buttonText: {
       color: '#ffffff',
       textAlign: 'center',
-      fontWeight: '600',
-      fontSize: 16,
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.lg,
     },
     linkContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 32,
     },
     linkText: {
-      color: '#6B7280',
-      fontSize: 14,
+      color: themedColors.textSecondary,
+      fontSize: typography.sizes.base,
     },
     linkButton: {
-      color: '#3366FF',
-      fontWeight: '600',
-      fontSize: 14,
+      color: colors.primary[600],
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.base,
     },
     termsContainer: {
-      marginTop: 32,
-      paddingTop: 24,
+      marginTop: spacing.xl,
+      paddingTop: spacing.lg,
       borderTopWidth: 1,
-      borderTopColor: '#E5E7EB',
+      borderTopColor: themedColors.border,
     },
     termsText: {
       textAlign: 'center',
-      fontSize: 12,
-      color: '#6B7280',
+      fontSize: typography.sizes.xs,
+      color: themedColors.textSecondary,
     },
   });
 
@@ -193,17 +191,17 @@ export default function RegisterScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.title}>Hesap Oluştur</Text>
-          <Text style={styles.subtitle}>Başlamak için kayıt olun</Text>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Sign up to get started</Text>
         </View>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-posta</Text>
+          <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
-            placeholder="eposta@ornek.com"
-            placeholderTextColor="#9CA3AF"
+            placeholder="your.email@example.com"
+            placeholderTextColor={themedColors.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -215,11 +213,11 @@ export default function RegisterScreen() {
 
         {/* Password Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Şifre</Text>
+          <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -227,16 +225,16 @@ export default function RegisterScreen() {
             autoComplete="password"
             editable={!isLoading}
           />
-          <Text style={styles.hint}>En az 6 karakter</Text>
+          <Text style={styles.hint}>At least 6 characters</Text>
         </View>
 
         {/* Confirm Password Input */}
         <View style={styles.inputContainerLarge}>
-          <Text style={styles.label}>Şifre Tekrarı</Text>
+          <Text style={styles.label}>Confirm Password</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -254,23 +252,23 @@ export default function RegisterScreen() {
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Hesap Oluştur</Text>
+            <Text style={styles.buttonText}>Create Account</Text>
           )}
         </TouchableOpacity>
 
         {/* Login Link */}
         <View style={styles.linkContainer}>
-          <Text style={styles.linkText}>Zaten hesabınız var mı? </Text>
+          <Text style={styles.linkText}>Already have an account? </Text>
           <TouchableOpacity onPress={goToLogin} disabled={isLoading}>
-            <Text style={styles.linkButton}>Giriş Yap</Text>
+            <Text style={styles.linkButton}>Sign In</Text>
           </TouchableOpacity>
         </View>
 
         {/* Terms and Privacy */}
         <View style={styles.termsContainer}>
           <Text style={styles.termsText}>
-            Hesap oluşturarak Kullanım Şartları ve{'\n'}
-            Gizlilik Politikasını kabul etmiş olursunuz
+            By creating an account, you agree to our{'\n'}
+            Terms of Service and Privacy Policy
           </Text>
         </View>
       </ScrollView>

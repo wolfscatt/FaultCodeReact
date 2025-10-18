@@ -19,6 +19,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useUserStore} from '@state/useUserStore';
+import {useTheme} from '@theme/useTheme';
+import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -51,96 +53,92 @@ export default function LoginScreen() {
     navigation.navigate('Register');
   };
 
-  // Create dynamic styles based on current theme - Modern design
+  // Create dynamic styles based on current theme
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#ffffff',
+      backgroundColor: themedColors.background,
     },
     scrollContent: {
       flexGrow: 1,
       justifyContent: 'center',
-      paddingHorizontal: 24,
+      paddingHorizontal: spacing.lg,
     },
     header: {
-      alignItems: 'center',
-      marginBottom: 48,
+      marginBottom: spacing.xl,
     },
     title: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: '#000000',
-      marginBottom: 8,
-      textAlign: 'center',
+      fontSize: typography.sizes['4xl'],
+      fontWeight: typography.weights.bold,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
     },
     subtitle: {
-      fontSize: 14,
-      color: '#6B7280',
-      textAlign: 'center',
+      fontSize: typography.sizes.lg,
+      color: themedColors.textSecondary,
     },
     inputContainer: {
-      marginBottom: 16,
+      marginBottom: spacing.md,
     },
     inputContainerLarge: {
-      marginBottom: 24,
+      marginBottom: spacing.lg,
     },
     label: {
-      fontSize: 14,
-      fontWeight: '500',
-      color: '#000000',
-      marginBottom: 8,
+      fontSize: typography.sizes.sm,
+      fontWeight: typography.weights.medium,
+      color: themedColors.text,
+      marginBottom: spacing.sm,
     },
     input: {
-      backgroundColor: '#ffffff',
-      color: '#000000',
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      borderRadius: 10,
+      backgroundColor: themedColors.background,
+      color: themedColors.text,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
       borderWidth: 1,
-      borderColor: '#E5E7EB',
-      fontSize: 16,
+      borderColor: themedColors.border,
+      fontSize: typography.sizes.base,
     },
     button: {
-      backgroundColor: '#3366FF',
-      paddingVertical: 16,
-      borderRadius: 10,
-      marginBottom: 24,
-      opacity: isLoading ? 0.7 : 1,
+      backgroundColor: colors.primary[600],
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.md,
+      marginBottom: spacing.md,
+      opacity: isLoading ? 0.5 : 1,
     },
     buttonText: {
       color: '#ffffff',
       textAlign: 'center',
-      fontWeight: '600',
-      fontSize: 16,
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.lg,
     },
     linkContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 32,
     },
     linkText: {
-      color: '#6B7280',
-      fontSize: 14,
+      color: themedColors.textSecondary,
+      fontSize: typography.sizes.base,
     },
     linkButton: {
-      color: '#3366FF',
-      fontWeight: '600',
-      fontSize: 14,
+      color: colors.primary[600],
+      fontWeight: typography.weights.semibold,
+      fontSize: typography.sizes.base,
     },
     guestContainer: {
-      marginTop: 32,
-      paddingTop: 24,
+      marginTop: spacing.xl,
+      paddingTop: spacing.lg,
       borderTopWidth: 1,
-      borderTopColor: '#E5E7EB',
+      borderTopColor: themedColors.border,
     },
     guestButton: {
-      paddingVertical: 16,
+      paddingVertical: spacing.md,
     },
     guestText: {
       textAlign: 'center',
-      color: '#6B7280',
-      fontSize: 14,
+      color: themedColors.textSecondary,
+      fontSize: typography.sizes.base,
     },
   });
 
@@ -152,17 +150,17 @@ export default function LoginScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.title}>FaultCode&apos;a Hoş Geldiniz</Text>
-          <Text style={styles.subtitle}>Global kombi arıza kodları asistanınız</Text>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Sign in to access your account</Text>
         </View>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-posta</Text>
+          <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
-            placeholder="eposta@ornek.com"
-            placeholderTextColor="#9CA3AF"
+            placeholder="your.email@example.com"
+            placeholderTextColor={themedColors.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -174,11 +172,11 @@ export default function LoginScreen() {
 
         {/* Password Input */}
         <View style={styles.inputContainerLarge}>
-          <Text style={styles.label}>Şifre</Text>
+          <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={themedColors.textSecondary}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -196,15 +194,15 @@ export default function LoginScreen() {
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Giriş Yap</Text>
+            <Text style={styles.buttonText}>Sign In</Text>
           )}
         </TouchableOpacity>
 
         {/* Register Link */}
         <View style={styles.linkContainer}>
-          <Text style={styles.linkText}>Hesabınız yok mu? </Text>
+          <Text style={styles.linkText}>Don't have an account? </Text>
           <TouchableOpacity onPress={goToRegister} disabled={isLoading}>
-            <Text style={styles.linkButton}>Kayıt Ol</Text>
+            <Text style={styles.linkButton}>Sign Up</Text>
           </TouchableOpacity>
         </View>
 
@@ -215,7 +213,7 @@ export default function LoginScreen() {
             onPress={() => navigation.navigate('MainTabs')}
             disabled={isLoading}>
             <Text style={styles.guestText}>
-              Misafir Olarak Devam Et (Sınırlı Özellikler)
+              Continue as Guest (Limited Features)
             </Text>
           </TouchableOpacity>
         </View>
