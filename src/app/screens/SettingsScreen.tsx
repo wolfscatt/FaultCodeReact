@@ -5,6 +5,7 @@
 
 import React from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Switch} from 'react-native';
+import Svg, {Path} from 'react-native-svg';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
@@ -12,15 +13,48 @@ import {usePrefsStore} from '@state/usePrefsStore';
 import {useUserStore} from '@state/useUserStore';
 import {useTheme} from '@theme/useTheme';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
+import {getFormattedVersion} from '@utils/appVersion';
 import i18n from '@i18n/index';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
+// Modern outline icons
+const InfoIcon = ({color, size = 24}: {color: string; size?: number}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+const MailIcon = ({color, size = 24}: {color: string; size?: number}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M22 6L12 13L2 6"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
 export default function SettingsScreen() {
   const {t} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const {theme: currentTheme, colors: themedColors} = useTheme();
+  const {colors: themedColors} = useTheme();
   const {language, theme, analyticsOptIn, setLanguage, toggleTheme, setAnalyticsOptIn} =
     usePrefsStore();
   const {plan, downgradeToFree, isLoggedIn, email} = useUserStore();
@@ -206,7 +240,7 @@ export default function SettingsScreen() {
               {t('about.description')}
             </Text>
           </View>
-          <Text style={styles.settingValue}>ℹ️</Text>
+          <InfoIcon color={themedColors.textSecondary} size={22} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.settingRow}
@@ -217,15 +251,15 @@ export default function SettingsScreen() {
               {t('contactUs.subtitle')}
             </Text>
           </View>
-          <Text style={styles.settingValue}>📧</Text>
+          <MailIcon color={themedColors.textSecondary} size={22} />
         </TouchableOpacity>
       </View>
 
       {/* App Info */}
       <View style={styles.appInfo}>
-        <Text style={dynamicStyles.appInfoText}>FaultCode v0.1.0</Text>
+        <Text style={dynamicStyles.appInfoText}>FaultCode {getFormattedVersion()}</Text>
         <Text style={dynamicStyles.appInfoSubtext}>
-          Boiler fault code assistant with mock data
+          Boiler fault code assistant with AI
         </Text>
       </View>
     </ScrollView>

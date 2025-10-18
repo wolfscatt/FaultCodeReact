@@ -3,7 +3,7 @@
  * Displays app information, developer details, and partner company info
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,12 +11,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Image,
+  Animated,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useTheme} from '@theme/useTheme';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
+import {getSimpleVersion} from '@utils/appVersion';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -25,6 +28,26 @@ export default function AboutScreen() {
   const {t} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const {colors: themedColors} = useTheme();
+  const [appVersion, setAppVersion] = useState('0.1.0');
+  const [fadeAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    // Get app version from native configuration
+    try {
+      const version = getSimpleVersion();
+      setAppVersion(version);
+    } catch (error) {
+      console.log('Could not get app version:', error);
+      setAppVersion('0.1.0'); // Fallback
+    }
+
+    // Fade in animation
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
 
   const dynamicStyles = StyleSheet.create({
     container: {
@@ -55,20 +78,25 @@ export default function AboutScreen() {
       marginBottom: spacing.lg,
       ...shadows.sm,
     },
-    appIcon: {
-      width: 80,
-      height: 80,
-      backgroundColor: colors.primary[100],
-      borderRadius: borderRadius.lg,
-      alignSelf: 'center',
-      marginBottom: spacing.lg,
+    appIconContainer: {
       alignItems: 'center',
-      justifyContent: 'center',
+      marginBottom: spacing.xl,
     },
-    appIconText: {
-      fontSize: typography.sizes.xl,
-      fontWeight: typography.weights.bold,
-      color: colors.primary[600],
+    appIcon: {
+      width: 120,
+      height: 120,
+      borderRadius: borderRadius.xl,
+      ...shadows.md,
+    },
+    appIconShadow: {
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 8,
     },
     title: {
       fontSize: typography.sizes.lg,
@@ -147,11 +175,21 @@ export default function AboutScreen() {
       </View>
 
       <ScrollView style={dynamicStyles.content} showsVerticalScrollIndicator={false}>
+        {/* App Icon */}
+        <Animated.View 
+          style={[
+            dynamicStyles.appIconContainer,
+            {opacity: fadeAnim}
+          ]}>
+          <Image
+            source={require('../../../assets/app_icons/app_icon.png')}
+            style={[dynamicStyles.appIcon, dynamicStyles.appIconShadow]}
+            resizeMode="contain"
+          />
+        </Animated.View>
+
         {/* App Info Card */}
         <View style={dynamicStyles.card}>
-          <View style={dynamicStyles.appIcon}>
-            <Text style={dynamicStyles.appIconText}>FC</Text>
-          </View>
           <Text style={dynamicStyles.title}>{t('about.title')}</Text>
           <Text style={dynamicStyles.description}>
             {t('about.description')}
@@ -172,14 +210,14 @@ export default function AboutScreen() {
           {/* Version Info */}
           <View style={[dynamicStyles.infoRow, dynamicStyles.infoRowLast]}>
             <Text style={dynamicStyles.infoLabel}>{t('about.version')}</Text>
-            <Text style={dynamicStyles.infoValue}>{t('about.versionNumber')}</Text>
+            <Text style={dynamicStyles.infoValue}>{appVersion}</Text>
           </View>
         </View>
 
         {/* Version Card */}
         <View style={dynamicStyles.versionCard}>
           <Text style={dynamicStyles.versionText}>{t('about.version')}</Text>
-          <Text style={dynamicStyles.versionNumber}>{t('about.versionNumber')}</Text>
+          <Text style={dynamicStyles.versionNumber}>{appVersion}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

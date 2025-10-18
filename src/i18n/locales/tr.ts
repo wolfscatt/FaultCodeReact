@@ -161,7 +161,7 @@ export default {
     developerName: 'Ömer Faruk BİNGÖL',
     partnerCompany: 'Partner Şirket',
     companyName: 'Çamlıca Teknik Servis',
-    description: 'Kapsamlı veritabanı ve uzman çözümlerle profesyonel kazan arıza kodu asistanı.',
+    description: 'Kapsamlı veritabanı ve uzman çözümlerle profesyonel kombi arıza kodu asistanı.',
     version: 'Sürüm',
     versionNumber: '0.1.0',
   },
