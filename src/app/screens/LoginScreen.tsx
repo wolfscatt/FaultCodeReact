@@ -19,8 +19,6 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useUserStore} from '@state/useUserStore';
-import {useTheme} from '@theme/useTheme';
-import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -154,7 +152,7 @@ export default function LoginScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.title}>FaultCode'a Hoş Geldiniz</Text>
+          <Text style={styles.title}>FaultCode&apos;a Hoş Geldiniz</Text>
           <Text style={styles.subtitle}>Global kombi arıza kodları asistanınız</Text>
         </View>
 

@@ -19,8 +19,6 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import type {StackNavigationProp} from '@react-navigation/stack';
 import {useUserStore} from '@state/useUserStore';
-import {useTheme} from '@theme/useTheme';
-import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import type {RootStackParamList} from '../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;

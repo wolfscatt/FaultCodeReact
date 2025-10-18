@@ -11,8 +11,6 @@ import SettingsScreen from '../screens/SettingsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import {useTranslation} from 'react-i18next';
 import {Text} from 'react-native';
-import {useTheme} from '@theme/useTheme';
-import {colors} from '@theme/tokens';
 import {useUserStore} from '@state/useUserStore';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
