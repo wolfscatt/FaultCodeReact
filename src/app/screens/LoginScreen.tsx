@@ -53,92 +53,96 @@ export default function LoginScreen() {
     navigation.navigate('Register');
   };
 
-  // Create dynamic styles based on current theme
+  // Create dynamic styles based on current theme - Modern design
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: themedColors.background,
+      backgroundColor: '#ffffff',
     },
     scrollContent: {
       flexGrow: 1,
       justifyContent: 'center',
-      paddingHorizontal: spacing.lg,
+      paddingHorizontal: 24,
     },
     header: {
-      marginBottom: spacing.xl,
+      alignItems: 'center',
+      marginBottom: 48,
     },
     title: {
-      fontSize: typography.sizes['4xl'],
-      fontWeight: typography.weights.bold,
-      color: themedColors.text,
-      marginBottom: spacing.sm,
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#000000',
+      marginBottom: 8,
+      textAlign: 'center',
     },
     subtitle: {
-      fontSize: typography.sizes.lg,
-      color: themedColors.textSecondary,
+      fontSize: 14,
+      color: '#6B7280',
+      textAlign: 'center',
     },
     inputContainer: {
-      marginBottom: spacing.md,
+      marginBottom: 16,
     },
     inputContainerLarge: {
-      marginBottom: spacing.lg,
+      marginBottom: 24,
     },
     label: {
-      fontSize: typography.sizes.sm,
-      fontWeight: typography.weights.medium,
-      color: themedColors.text,
-      marginBottom: spacing.sm,
+      fontSize: 14,
+      fontWeight: '500',
+      color: '#000000',
+      marginBottom: 8,
     },
     input: {
-      backgroundColor: themedColors.background,
-      color: themedColors.text,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.md,
-      borderRadius: borderRadius.md,
+      backgroundColor: '#ffffff',
+      color: '#000000',
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderRadius: 10,
       borderWidth: 1,
-      borderColor: themedColors.border,
-      fontSize: typography.sizes.base,
+      borderColor: '#E5E7EB',
+      fontSize: 16,
     },
     button: {
-      backgroundColor: colors.primary[600],
-      paddingVertical: spacing.md,
-      borderRadius: borderRadius.md,
-      marginBottom: spacing.md,
-      opacity: isLoading ? 0.5 : 1,
+      backgroundColor: '#3366FF',
+      paddingVertical: 16,
+      borderRadius: 10,
+      marginBottom: 24,
+      opacity: isLoading ? 0.7 : 1,
     },
     buttonText: {
       color: '#ffffff',
       textAlign: 'center',
-      fontWeight: typography.weights.semibold,
-      fontSize: typography.sizes.lg,
+      fontWeight: '600',
+      fontSize: 16,
     },
     linkContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      marginBottom: 32,
     },
     linkText: {
-      color: themedColors.textSecondary,
-      fontSize: typography.sizes.base,
+      color: '#6B7280',
+      fontSize: 14,
     },
     linkButton: {
-      color: colors.primary[600],
-      fontWeight: typography.weights.semibold,
-      fontSize: typography.sizes.base,
+      color: '#3366FF',
+      fontWeight: '600',
+      fontSize: 14,
     },
     guestContainer: {
-      marginTop: spacing.xl,
-      paddingTop: spacing.lg,
+      marginTop: 32,
+      paddingTop: 24,
       borderTopWidth: 1,
-      borderTopColor: themedColors.border,
+      borderTopColor: '#E5E7EB',
     },
     guestButton: {
-      paddingVertical: spacing.md,
+      paddingVertical: 16,
     },
     guestText: {
       textAlign: 'center',
-      color: themedColors.textSecondary,
-      fontSize: typography.sizes.base,
+      color: '#6B7280',
+      fontSize: 14,
     },
   });
 
@@ -150,17 +154,17 @@ export default function LoginScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to access your account</Text>
+          <Text style={styles.title}>FaultCode'a Hoş Geldiniz</Text>
+          <Text style={styles.subtitle}>Global kombi arıza kodları asistanınız</Text>
         </View>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>E-posta</Text>
           <TextInput
             style={styles.input}
-            placeholder="your.email@example.com"
-            placeholderTextColor={themedColors.textSecondary}
+            placeholder="eposta@ornek.com"
+            placeholderTextColor="#9CA3AF"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -172,11 +176,11 @@ export default function LoginScreen() {
 
         {/* Password Input */}
         <View style={styles.inputContainerLarge}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>Şifre</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor={themedColors.textSecondary}
+            placeholderTextColor="#9CA3AF"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -194,15 +198,15 @@ export default function LoginScreen() {
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
+            <Text style={styles.buttonText}>Giriş Yap</Text>
           )}
         </TouchableOpacity>
 
         {/* Register Link */}
         <View style={styles.linkContainer}>
-          <Text style={styles.linkText}>Don't have an account? </Text>
+          <Text style={styles.linkText}>Hesabınız yok mu? </Text>
           <TouchableOpacity onPress={goToRegister} disabled={isLoading}>
-            <Text style={styles.linkButton}>Sign Up</Text>
+            <Text style={styles.linkButton}>Kayıt Ol</Text>
           </TouchableOpacity>
         </View>
 
@@ -213,7 +217,7 @@ export default function LoginScreen() {
             onPress={() => navigation.navigate('MainTabs')}
             disabled={isLoading}>
             <Text style={styles.guestText}>
-              Continue as Guest (Limited Features)
+              Misafir Olarak Devam Et (Sınırlı Özellikler)
             </Text>
           </TouchableOpacity>
         </View>

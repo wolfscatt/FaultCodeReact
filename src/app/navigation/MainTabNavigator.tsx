@@ -26,11 +26,24 @@ export default function MainTabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary[600],
-        tabBarInactiveTintColor: themedColors.textSecondary,
+        tabBarActiveTintColor: '#3366FF',
+        tabBarInactiveTintColor: '#6B7280',
         tabBarStyle: {
-          backgroundColor: themedColors.surface,
-          borderTopColor: themedColors.border,
+          backgroundColor: '#ffffff',
+          borderTopWidth: 0,
+          paddingTop: 8,
+          paddingBottom: 8,
+          height: 60,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+          marginTop: 4,
         },
       }}>
       <Tab.Screen
@@ -38,7 +51,7 @@ export default function MainTabNavigator() {
         component={SearchStackNavigator}
         options={{
           tabBarLabel: t('navigation.search'),
-          tabBarIcon: ({color}) => <Text style={{color, fontSize: 24}}>🔍</Text>,
+          tabBarIcon: ({color, size}) => <Text style={{color, fontSize: size || 20}}>🔍</Text>,
         }}
       />
       {isPremium() && (
@@ -47,7 +60,7 @@ export default function MainTabNavigator() {
           component={FavoritesScreen}
           options={{
             tabBarLabel: t('navigation.favorites'),
-            tabBarIcon: ({color}) => <Text style={{color, fontSize: 24}}>⭐</Text>,
+            tabBarIcon: ({color, size}) => <Text style={{color, fontSize: size || 20}}>⭐</Text>,
           }}
         />
       )}
@@ -56,7 +69,7 @@ export default function MainTabNavigator() {
         component={SettingsScreen}
         options={{
           tabBarLabel: t('navigation.settings'),
-          tabBarIcon: ({color}) => <Text style={{color, fontSize: 24}}>⚙️</Text>,
+          tabBarIcon: ({color, size}) => <Text style={{color, fontSize: size || 20}}>⚙️</Text>,
         }}
       />
     </Tab.Navigator>

@@ -92,94 +92,98 @@ export default function RegisterScreen() {
     navigation.navigate('Login');
   };
 
-  // Create dynamic styles based on current theme
+  // Create dynamic styles based on current theme - Modern design
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: themedColors.background,
+      backgroundColor: '#ffffff',
     },
     scrollContent: {
       flexGrow: 1,
       justifyContent: 'center',
-      paddingHorizontal: spacing.lg,
+      paddingHorizontal: 24,
     },
     header: {
-      marginBottom: spacing.xl,
+      alignItems: 'center',
+      marginBottom: 48,
     },
     title: {
-      fontSize: typography.sizes['4xl'],
-      fontWeight: typography.weights.bold,
-      color: themedColors.text,
-      marginBottom: spacing.sm,
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#000000',
+      marginBottom: 8,
+      textAlign: 'center',
     },
     subtitle: {
-      fontSize: typography.sizes.lg,
-      color: themedColors.textSecondary,
+      fontSize: 14,
+      color: '#6B7280',
+      textAlign: 'center',
     },
     inputContainer: {
-      marginBottom: spacing.md,
+      marginBottom: 16,
     },
     inputContainerLarge: {
-      marginBottom: spacing.lg,
+      marginBottom: 24,
     },
     label: {
-      fontSize: typography.sizes.sm,
-      fontWeight: typography.weights.medium,
-      color: themedColors.text,
-      marginBottom: spacing.sm,
+      fontSize: 14,
+      fontWeight: '500',
+      color: '#000000',
+      marginBottom: 8,
     },
     input: {
-      backgroundColor: themedColors.background,
-      color: themedColors.text,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.md,
-      borderRadius: borderRadius.md,
+      backgroundColor: '#ffffff',
+      color: '#000000',
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderRadius: 10,
       borderWidth: 1,
-      borderColor: themedColors.border,
-      fontSize: typography.sizes.base,
+      borderColor: '#E5E7EB',
+      fontSize: 16,
     },
     hint: {
-      fontSize: typography.sizes.xs,
-      color: themedColors.textSecondary,
-      marginTop: spacing.xs,
+      fontSize: 12,
+      color: '#6B7280',
+      marginTop: 4,
     },
     button: {
-      backgroundColor: colors.primary[600],
-      paddingVertical: spacing.md,
-      borderRadius: borderRadius.md,
-      marginBottom: spacing.md,
-      opacity: isLoading ? 0.5 : 1,
+      backgroundColor: '#3366FF',
+      paddingVertical: 16,
+      borderRadius: 10,
+      marginBottom: 24,
+      opacity: isLoading ? 0.7 : 1,
     },
     buttonText: {
       color: '#ffffff',
       textAlign: 'center',
-      fontWeight: typography.weights.semibold,
-      fontSize: typography.sizes.lg,
+      fontWeight: '600',
+      fontSize: 16,
     },
     linkContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      marginBottom: 32,
     },
     linkText: {
-      color: themedColors.textSecondary,
-      fontSize: typography.sizes.base,
+      color: '#6B7280',
+      fontSize: 14,
     },
     linkButton: {
-      color: colors.primary[600],
-      fontWeight: typography.weights.semibold,
-      fontSize: typography.sizes.base,
+      color: '#3366FF',
+      fontWeight: '600',
+      fontSize: 14,
     },
     termsContainer: {
-      marginTop: spacing.xl,
-      paddingTop: spacing.lg,
+      marginTop: 32,
+      paddingTop: 24,
       borderTopWidth: 1,
-      borderTopColor: themedColors.border,
+      borderTopColor: '#E5E7EB',
     },
     termsText: {
       textAlign: 'center',
-      fontSize: typography.sizes.xs,
-      color: themedColors.textSecondary,
+      fontSize: 12,
+      color: '#6B7280',
     },
   });
 
@@ -191,17 +195,17 @@ export default function RegisterScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
+          <Text style={styles.title}>Hesap Oluştur</Text>
+          <Text style={styles.subtitle}>Başlamak için kayıt olun</Text>
         </View>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>E-posta</Text>
           <TextInput
             style={styles.input}
-            placeholder="your.email@example.com"
-            placeholderTextColor={themedColors.textSecondary}
+            placeholder="eposta@ornek.com"
+            placeholderTextColor="#9CA3AF"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -213,11 +217,11 @@ export default function RegisterScreen() {
 
         {/* Password Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>Şifre</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor={themedColors.textSecondary}
+            placeholderTextColor="#9CA3AF"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -225,16 +229,16 @@ export default function RegisterScreen() {
             autoComplete="password"
             editable={!isLoading}
           />
-          <Text style={styles.hint}>At least 6 characters</Text>
+          <Text style={styles.hint}>En az 6 karakter</Text>
         </View>
 
         {/* Confirm Password Input */}
         <View style={styles.inputContainerLarge}>
-          <Text style={styles.label}>Confirm Password</Text>
+          <Text style={styles.label}>Şifre Tekrarı</Text>
           <TextInput
             style={styles.input}
             placeholder="••••••••"
-            placeholderTextColor={themedColors.textSecondary}
+            placeholderTextColor="#9CA3AF"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -252,23 +256,23 @@ export default function RegisterScreen() {
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
+            <Text style={styles.buttonText}>Hesap Oluştur</Text>
           )}
         </TouchableOpacity>
 
         {/* Login Link */}
         <View style={styles.linkContainer}>
-          <Text style={styles.linkText}>Already have an account? </Text>
+          <Text style={styles.linkText}>Zaten hesabınız var mı? </Text>
           <TouchableOpacity onPress={goToLogin} disabled={isLoading}>
-            <Text style={styles.linkButton}>Sign In</Text>
+            <Text style={styles.linkButton}>Giriş Yap</Text>
           </TouchableOpacity>
         </View>
 
         {/* Terms and Privacy */}
         <View style={styles.termsContainer}>
           <Text style={styles.termsText}>
-            By creating an account, you agree to our{'\n'}
-            Terms of Service and Privacy Policy
+            Hesap oluşturarak Kullanım Şartları ve{'\n'}
+            Gizlilik Politikasını kabul etmiş olursunuz
           </Text>
         </View>
       </ScrollView>
