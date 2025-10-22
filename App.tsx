@@ -13,6 +13,7 @@ import ThemeProvider from './src/providers/ThemeProvider';
 import './src/i18n'; // Initialize i18n
 import {usePrefsStore} from './src/state/usePrefsStore';
 import {useUserStore} from './src/state/useUserStore';
+import {initializeAds} from './src/services/AdManager';
 
 // Ignore specific warnings during development
 LogBox.ignoreLogs([
@@ -33,9 +34,10 @@ function App(): React.JSX.Element {
   const theme = usePrefsStore(state => state.theme);
   const initialize = useUserStore(state => state.initialize);
 
-  // Initialize auth on app start
+  // Initialize auth and ads on app start
   useEffect(() => {
     initialize();
+    initializeAds();
   }, [initialize]);
 
   // Set status bar style based on theme

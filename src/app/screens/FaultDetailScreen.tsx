@@ -27,6 +27,7 @@ import {useTheme} from '@theme/useTheme';
 import {formatDate} from '@utils/index';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
+import {adManager} from '../../services/AdManager';
 
 type Props = SearchStackScreenProps<'FaultDetail'>;
 
@@ -56,6 +57,8 @@ export default function FaultDetailScreen({route, navigation}: Props) {
     // Increment quota for free users
     if (plan === 'free') {
       incrementQuota();
+      // Track fault view for ad management
+      adManager.trackFaultView();
     }
 
     // Load fault data
