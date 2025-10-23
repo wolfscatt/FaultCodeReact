@@ -2,9 +2,10 @@
  * AdManager
  * Handles Google AdMob banner and interstitial ads
  * Shows ads only to free users, pro users see no ads
+ * TEMPORARILY DISABLED - Using mock implementation due to Kotlin compatibility issues
  */
 
-import mobileAds, {MaxAdContentRating} from 'react-native-google-mobile-ads';
+// import mobileAds, {MaxAdContentRating} from 'react-native-google-mobile-ads';
 import {useUserStore} from '@state/useUserStore';
 
 // Test Ad Unit IDs (replace with real IDs in production)
@@ -16,11 +17,12 @@ export const AD_UNIT_IDS = {
 /**
  * Initialize Google Mobile Ads SDK
  * Call this once when the app starts
+ * TEMPORARILY DISABLED - Mock implementation
  */
 export const initializeAds = async (): Promise<void> => {
   try {
-    await mobileAds().initialize();
-    console.log('[AdManager] Google Mobile Ads SDK initialized');
+    // await mobileAds().initialize();
+    console.log('[AdManager] Google Mobile Ads SDK initialization skipped (mock mode)');
   } catch (error) {
     console.error('[AdManager] Failed to initialize ads:', error);
   }
@@ -37,9 +39,10 @@ export const shouldShowAds = (): boolean => {
 
 /**
  * Get ad content rating for child safety
+ * TEMPORARILY DISABLED - Mock implementation
  */
-export const getAdContentRating = (): MaxAdContentRating => {
-  return MaxAdContentRating.PG;
+export const getAdContentRating = (): any => {
+  return 'PG'; // Mock return value
 };
 
 /**
@@ -65,6 +68,7 @@ export class AdManager {
 
   /**
    * Load interstitial ad
+   * TEMPORARILY DISABLED - Mock implementation
    */
   private async loadInterstitialAd(): Promise<void> {
     if (!shouldShowAds()) {
@@ -72,34 +76,9 @@ export class AdManager {
     }
 
     try {
-      const {InterstitialAd, AdEventType, TestIds} = await import('react-native-google-mobile-ads');
-      
-      this.interstitialAd = InterstitialAd.createForAdRequest(AD_UNIT_IDS.INTERSTITIAL, {
-        requestNonPersonalizedAdsOnly: true,
-      });
-
-      this.interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
-        console.log('[AdManager] Interstitial ad loaded');
-        this.isInterstitialLoaded = true;
-      });
-
-      this.interstitialAd.addAdEventListener(AdEventType.ERROR, (error: any) => {
-        console.error('[AdManager] Interstitial ad error:', error);
-        this.isInterstitialLoaded = false;
-      });
-
-      this.interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
-        console.log('[AdManager] Interstitial ad opened');
-      });
-
-      this.interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
-        console.log('[AdManager] Interstitial ad closed');
-        this.isInterstitialLoaded = false;
-        // Reload ad for next time
-        this.loadInterstitialAd();
-      });
-
-      this.interstitialAd.load();
+      // Mock implementation - no real ad loading
+      console.log('[AdManager] Interstitial ad loading skipped (mock mode)');
+      this.isInterstitialLoaded = true; // Mock as loaded
     } catch (error) {
       console.error('[AdManager] Failed to create interstitial ad:', error);
     }
@@ -108,6 +87,7 @@ export class AdManager {
   /**
    * Show interstitial ad if conditions are met
    * @param force - Force show ad regardless of view count
+   * TEMPORARILY DISABLED - Mock implementation
    */
   public async showInterstitialAd(force: boolean = false): Promise<void> {
     if (!shouldShowAds()) {
@@ -120,10 +100,9 @@ export class AdManager {
     }
 
     try {
-      if (this.interstitialAd) {
-        await this.interstitialAd.show();
-        this.faultViewCount = 0; // Reset counter after showing ad
-      }
+      // Mock implementation - just log instead of showing real ad
+      console.log('[AdManager] Interstitial ad show skipped (mock mode)');
+      this.faultViewCount = 0; // Reset counter after showing ad
     } catch (error) {
       console.error('[AdManager] Failed to show interstitial ad:', error);
     }
