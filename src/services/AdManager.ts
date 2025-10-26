@@ -4,7 +4,7 @@
  * Shows ads only to free users, pro users see no ads
  */
 
-import mobileAds, {MaxAdContentRating, InterstitialAd, AdEventType, AppOpenAd} from 'react-native-google-mobile-ads';
+import {AdMobBanner, AdMobInterstitial} from 'react-native-admob';
 import {useUserStore} from '@state/useUserStore';
 import {adMobConfig} from '@config/admobConfig';
 
@@ -12,7 +12,6 @@ import {adMobConfig} from '@config/admobConfig';
 export const AD_UNIT_IDS = {
   BANNER: adMobConfig.banner,
   INTERSTITIAL: adMobConfig.interstitial,
-  APP_OPEN: adMobConfig.appOpen,
 } as const;
 
 /**
@@ -21,8 +20,13 @@ export const AD_UNIT_IDS = {
  */
 export const initializeAds = async (): Promise<void> => {
   try {
-    await mobileAds().initialize();
-    console.log('[AdManager] Google Mobile Ads SDK initialized');
+    // Set up interstitial ad unit ID
+    AdMobInterstitial.setAdUnitID(AD_UNIT_IDS.INTERSTITIAL);
+    
+    // Request initial interstitial ad
+    await AdMobInterstitial.requestAdAsync();
+    
+    console.log('[AdManager] AdMob SDK initialized');
   } catch (error) {
     console.error('[AdManager] Failed to initialize ads:', error);
   }
@@ -40,19 +44,8 @@ export const shouldShowAds = (): boolean => {
 /**
  * Get ad content rating for child safety
  */
-export const getAdContentRating = (): MaxAdContentRating => {
-  switch (adMobConfig.maxAdContentRating) {
-    case 'G':
-      return MaxAdContentRating.G;
-    case 'PG':
-      return MaxAdContentRating.PG;
-    case 'T':
-      return MaxAdContentRating.T;
-    case 'MA':
-      return MaxAdContentRating.MA;
-    default:
-      return MaxAdContentRating.PG;
-  }
+export const getAdContentRating = (): string => {
+  return adMobConfig.maxAdContentRating;
 };
 
 /**
@@ -60,16 +53,12 @@ export const getAdContentRating = (): MaxAdContentRating => {
  */
 export class AdManager {
   private static instance: AdManager;
-  private interstitialAd: InterstitialAd | null = null;
-  private appOpenAd: AppOpenAd | null = null;
   private isInterstitialLoaded = false;
-  private isAppOpenLoaded = false;
   private faultViewCount = 0;
   private readonly FAULT_VIEW_LIMIT = 5; // Show interstitial after 5 fault views
 
   private constructor() {
-    this.loadInterstitialAd();
-    this.loadAppOpenAd();
+    this.setupInterstitialAd();
   }
 
   public static getInstance(): AdManager {
@@ -80,82 +69,55 @@ export class AdManager {
   }
 
   /**
-   * Load interstitial ad
+   * Setup interstitial ad with event listeners
    */
-  private async loadInterstitialAd(): Promise<void> {
+  private async setupInterstitialAd(): Promise<void> {
     if (!shouldShowAds()) {
       return; // Don't load ads for pro users
     }
 
     try {
-      this.interstitialAd = InterstitialAd.createForAdRequest(AD_UNIT_IDS.INTERSTITIAL, {
-        requestNonPersonalizedAdsOnly: adMobConfig.requestNonPersonalizedAdsOnly,
-      });
-
-      this.interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
+      // Set up event listeners
+      AdMobInterstitial.addEventListener('adLoaded', () => {
         console.log('[AdManager] Interstitial ad loaded');
         this.isInterstitialLoaded = true;
       });
 
-      this.interstitialAd.addAdEventListener(AdEventType.ERROR, (error: any) => {
-        console.error('[AdManager] Interstitial ad error:', error);
+      AdMobInterstitial.addEventListener('adFailedToLoad', (error: any) => {
+        console.error('[AdManager] Interstitial ad failed to load:', error);
         this.isInterstitialLoaded = false;
       });
 
-      this.interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
+      AdMobInterstitial.addEventListener('adOpened', () => {
         console.log('[AdManager] Interstitial ad opened');
       });
 
-      this.interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
+      AdMobInterstitial.addEventListener('adClosed', () => {
         console.log('[AdManager] Interstitial ad closed');
         this.isInterstitialLoaded = false;
-        // Reload ad for next time
-        this.loadInterstitialAd();
+        // Request new ad for next time
+        this.requestNewInterstitialAd();
       });
 
-      this.interstitialAd.load();
+      // Request initial ad
+      await this.requestNewInterstitialAd();
     } catch (error) {
-      console.error('[AdManager] Failed to create interstitial ad:', error);
+      console.error('[AdManager] Failed to setup interstitial ad:', error);
     }
   }
 
   /**
-   * Load app open ad
+   * Request a new interstitial ad
    */
-  private async loadAppOpenAd(): Promise<void> {
+  private async requestNewInterstitialAd(): Promise<void> {
     if (!shouldShowAds()) {
       return; // Don't load ads for pro users
     }
 
     try {
-      this.appOpenAd = AppOpenAd.createForAdRequest(AD_UNIT_IDS.APP_OPEN, {
-        requestNonPersonalizedAdsOnly: adMobConfig.requestNonPersonalizedAdsOnly,
-      });
-
-      this.appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
-        console.log('[AdManager] App open ad loaded');
-        this.isAppOpenLoaded = true;
-      });
-
-      this.appOpenAd.addAdEventListener(AdEventType.ERROR, (error: any) => {
-        console.error('[AdManager] App open ad error:', error);
-        this.isAppOpenLoaded = false;
-      });
-
-      this.appOpenAd.addAdEventListener(AdEventType.OPENED, () => {
-        console.log('[AdManager] App open ad opened');
-      });
-
-      this.appOpenAd.addAdEventListener(AdEventType.CLOSED, () => {
-        console.log('[AdManager] App open ad closed');
-        this.isAppOpenLoaded = false;
-        // Reload ad for next time
-        this.loadAppOpenAd();
-      });
-
-      this.appOpenAd.load();
+      await AdMobInterstitial.requestAdAsync();
     } catch (error) {
-      console.error('[AdManager] Failed to create app open ad:', error);
+      console.error('[AdManager] Failed to request interstitial ad:', error);
     }
   }
 
@@ -174,10 +136,8 @@ export class AdManager {
     }
 
     try {
-      if (this.interstitialAd) {
-        await this.interstitialAd.show();
-        this.faultViewCount = 0; // Reset counter after showing ad
-      }
+      await AdMobInterstitial.showAdAsync();
+      this.faultViewCount = 0; // Reset counter after showing ad
     } catch (error) {
       console.error('[AdManager] Failed to show interstitial ad:', error);
     }
@@ -209,40 +169,11 @@ export class AdManager {
   }
 
   /**
-   * Show app open ad
-   */
-  public async showAppOpenAd(): Promise<void> {
-    if (!shouldShowAds()) {
-      return; // Don't show ads for pro users
-    }
-
-    if (!this.isAppOpenLoaded) {
-      console.log('[AdManager] App open ad not loaded yet');
-      return;
-    }
-
-    try {
-      if (this.appOpenAd) {
-        await this.appOpenAd.show();
-      }
-    } catch (error) {
-      console.error('[AdManager] Failed to show app open ad:', error);
-    }
-  }
-
-  /**
    * Reset ad state (useful when user upgrades to pro)
    */
   public resetAdState(): void {
     this.faultViewCount = 0;
     this.isInterstitialLoaded = false;
-    this.isAppOpenLoaded = false;
-    if (this.interstitialAd) {
-      this.interstitialAd = null;
-    }
-    if (this.appOpenAd) {
-      this.appOpenAd = null;
-    }
   }
 
   /**
@@ -257,13 +188,6 @@ export class AdManager {
    */
   public isInterstitialReady(): boolean {
     return this.isInterstitialLoaded;
-  }
-
-  /**
-   * Check if app open ad is loaded
-   */
-  public isAppOpenReady(): boolean {
-    return this.isAppOpenLoaded;
   }
 }
 

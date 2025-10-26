@@ -5,16 +5,16 @@
 
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {AdMobBanner} from 'react-native-admob';
 import {useUserStore} from '@state/useUserStore';
 import {AD_UNIT_IDS} from '../services/AdManager';
 
 interface BannerAdProps {
   style?: any;
-  size?: BannerAdSize;
+  bannerSize?: string;
 }
 
-export default function BannerAdComponent({style, size = BannerAdSize.ADAPTIVE_BANNER}: BannerAdProps) {
+export default function BannerAdComponent({style, bannerSize = 'banner'}: BannerAdProps) {
   const {plan} = useUserStore();
   const [shouldShowAd, setShouldShowAd] = useState(false);
 
@@ -30,12 +30,10 @@ export default function BannerAdComponent({style, size = BannerAdSize.ADAPTIVE_B
 
   return (
     <View style={[styles.container, style]}>
-      <BannerAd
-        unitId={AD_UNIT_IDS.BANNER}
-        size={size}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
+      <AdMobBanner
+        adUnitID={AD_UNIT_IDS.BANNER}
+        bannerSize={bannerSize}
+        testDeviceID="EMULATOR"
         onAdLoaded={() => {
           console.log('[BannerAd] Ad loaded successfully');
         }}
