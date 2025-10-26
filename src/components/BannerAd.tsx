@@ -1,11 +1,13 @@
 /**
  * BannerAd Component
  * Displays Google AdMob banner ads for free users only
+ * 
+ * Note: Using mock implementation for development/testing
+ * Replace with real AdMob SDK when ready for production
  */
 
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {AdMobBanner} from 'react-native-admob';
+import {View, Text, StyleSheet} from 'react-native';
 import {useUserStore} from '@state/useUserStore';
 import {AD_UNIT_IDS} from '../services/AdManager';
 
@@ -30,17 +32,11 @@ export default function BannerAdComponent({style, bannerSize = 'banner'}: Banner
 
   return (
     <View style={[styles.container, style]}>
-      <AdMobBanner
-        adUnitID={AD_UNIT_IDS.BANNER}
-        bannerSize={bannerSize}
-        testDeviceID="EMULATOR"
-        onAdLoaded={() => {
-          console.log('[BannerAd] Ad loaded successfully');
-        }}
-        onAdFailedToLoad={(error) => {
-          console.error('[BannerAd] Ad failed to load:', error);
-        }}
-      />
+      <View style={styles.mockAd}>
+        <Text style={styles.mockAdText}>📱 Mock Banner Ad</Text>
+        <Text style={styles.mockAdSubtext}>Ad Unit: {AD_UNIT_IDS.BANNER}</Text>
+        <Text style={styles.mockAdSubtext}>Size: {bannerSize}</Text>
+      </View>
     </View>
   );
 }
@@ -49,5 +45,28 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  mockAd: {
+    backgroundColor: '#e0e0e0',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#d0d0d0',
+    borderStyle: 'dashed',
+  },
+  mockAdText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 4,
+  },
+  mockAdSubtext: {
+    fontSize: 10,
+    color: '#888',
+    textAlign: 'center',
   },
 });

@@ -2,9 +2,11 @@
  * AdManager
  * Handles Google AdMob banner and interstitial ads
  * Shows ads only to free users, pro users see no ads
+ * 
+ * Note: Using mock implementation for development/testing
+ * Replace with real AdMob SDK when ready for production
  */
 
-import {AdMobBanner, AdMobInterstitial} from 'react-native-admob';
 import {useUserStore} from '@state/useUserStore';
 import {adMobConfig} from '@config/admobConfig';
 
@@ -20,13 +22,9 @@ export const AD_UNIT_IDS = {
  */
 export const initializeAds = async (): Promise<void> => {
   try {
-    // Set up interstitial ad unit ID
-    AdMobInterstitial.setAdUnitID(AD_UNIT_IDS.INTERSTITIAL);
-    
-    // Request initial interstitial ad
-    await AdMobInterstitial.requestAdAsync();
-    
-    console.log('[AdManager] AdMob SDK initialized');
+    console.log('[AdManager] Mock AdMob SDK initialized');
+    console.log('[AdManager] Banner Ad Unit ID:', AD_UNIT_IDS.BANNER);
+    console.log('[AdManager] Interstitial Ad Unit ID:', AD_UNIT_IDS.INTERSTITIAL);
   } catch (error) {
     console.error('[AdManager] Failed to initialize ads:', error);
   }
@@ -77,30 +75,8 @@ export class AdManager {
     }
 
     try {
-      // Set up event listeners
-      AdMobInterstitial.addEventListener('adLoaded', () => {
-        console.log('[AdManager] Interstitial ad loaded');
-        this.isInterstitialLoaded = true;
-      });
-
-      AdMobInterstitial.addEventListener('adFailedToLoad', (error: any) => {
-        console.error('[AdManager] Interstitial ad failed to load:', error);
-        this.isInterstitialLoaded = false;
-      });
-
-      AdMobInterstitial.addEventListener('adOpened', () => {
-        console.log('[AdManager] Interstitial ad opened');
-      });
-
-      AdMobInterstitial.addEventListener('adClosed', () => {
-        console.log('[AdManager] Interstitial ad closed');
-        this.isInterstitialLoaded = false;
-        // Request new ad for next time
-        this.requestNewInterstitialAd();
-      });
-
-      // Request initial ad
-      await this.requestNewInterstitialAd();
+      console.log('[AdManager] Setting up mock interstitial ad');
+      this.isInterstitialLoaded = true;
     } catch (error) {
       console.error('[AdManager] Failed to setup interstitial ad:', error);
     }
@@ -115,7 +91,8 @@ export class AdManager {
     }
 
     try {
-      await AdMobInterstitial.requestAdAsync();
+      console.log('[AdManager] Requesting mock interstitial ad');
+      this.isInterstitialLoaded = true;
     } catch (error) {
       console.error('[AdManager] Failed to request interstitial ad:', error);
     }
@@ -136,8 +113,15 @@ export class AdManager {
     }
 
     try {
-      await AdMobInterstitial.showAdAsync();
+      console.log('[AdManager] Showing mock interstitial ad');
       this.faultViewCount = 0; // Reset counter after showing ad
+      
+      // Simulate ad display time
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('[AdManager] Mock interstitial ad closed');
+      
+      // Request new ad for next time
+      await this.requestNewInterstitialAd();
     } catch (error) {
       console.error('[AdManager] Failed to show interstitial ad:', error);
     }
