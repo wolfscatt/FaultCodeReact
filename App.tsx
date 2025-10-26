@@ -13,7 +13,7 @@ import ThemeProvider from './src/providers/ThemeProvider';
 import './src/i18n'; // Initialize i18n
 import {usePrefsStore} from './src/state/usePrefsStore';
 import {useUserStore} from './src/state/useUserStore';
-import {initializeAds} from './src/services/AdManager';
+import {initializeAds, adManager} from './src/services/AdManager';
 
 // Ignore specific warnings during development
 LogBox.ignoreLogs([
@@ -36,8 +36,17 @@ function App(): React.JSX.Element {
 
   // Initialize auth and ads on app start
   useEffect(() => {
-    initialize();
-    initializeAds();
+    const initializeApp = async () => {
+      await initialize();
+      await initializeAds();
+      
+      // Show app open ad after initialization (for free users)
+      setTimeout(() => {
+        adManager.showAppOpenAd();
+      }, 1000); // Small delay to ensure app is fully loaded
+    };
+    
+    initializeApp();
   }, [initialize]);
 
   // Set status bar style based on theme

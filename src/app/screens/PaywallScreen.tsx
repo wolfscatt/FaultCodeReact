@@ -10,7 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {useUserStore, useCanAccessContent} from '@state/useUserStore';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
-import {adManager} from '../services/AdManager';
+import {adManager} from '../../services/AdManager';
 
 type Props = RootStackScreenProps<'Paywall'>;
 
