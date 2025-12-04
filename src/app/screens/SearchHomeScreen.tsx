@@ -20,7 +20,7 @@ import {getAllBrands} from '@data/repo/brandRepo';
 import {FaultCode, Brand} from '@data/types';
 import {debounce} from '@utils/index';
 import FaultCodeCard from '@components/FaultCodeCard';
-import BannerAd from '@components/BannerAd';
+import AdBanner from '@components/AdBanner';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
@@ -170,14 +170,6 @@ export default function SearchHomeScreen({navigation}: Props) {
       fontSize: 64,
       marginBottom: spacing.md,
     },
-    bannerAd: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: '#f0f0f0',
-      paddingVertical: spacing.sm,
-    },
   });
 
   // Render functions (defined after styles so they can use them)
@@ -275,10 +267,8 @@ export default function SearchHomeScreen({navigation}: Props) {
         )}
         contentContainerStyle={staticStyles.listContent}
         ListEmptyComponent={renderEmptyState}
+        ListFooterComponent={<AdBanner />}
       />
-      
-      {/* Banner Ad for Free Users */}
-      <BannerAd style={staticStyles.bannerAd} />
     </View>
   );
 }

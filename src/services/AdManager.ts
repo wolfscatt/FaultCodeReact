@@ -1,179 +1,115 @@
 /**
- * AdManager
- * Handles Google AdMob banner and interstitial ads
- * Shows ads only to free users, pro users see no ads
- * 
- * Note: Using mock implementation for development/testing
- * Replace with real AdMob SDK when ready for production
+ * AdManager Service
+ * Manages ad display logic for free vs pro users
+ * Integrates with Start.io (StartApp) for Android
  */
 
+import {Platform} from 'react-native';
 import {useUserStore} from '@state/useUserStore';
-import {adMobConfig} from '@config/admobConfig';
+import {initStartIO, loadInterstitial, showInterstitial} from './startio/bridge';
+import {STARTIO_APP_ID} from './startio/config';
 
-// Test Ad Unit IDs (replace with real IDs in production)
-export const AD_UNIT_IDS = {
-  BANNER: adMobConfig.banner,
-  INTERSTITIAL: adMobConfig.interstitial,
-} as const;
+// Configuration
+const INTERSTITIAL_AD_INTERVAL = 5; // Show interstitial after every N fault views
 
-/**
- * Initialize Google Mobile Ads SDK
- * Call this once when the app starts
- */
-export const initializeAds = async (): Promise<void> => {
-  try {
-    console.log('[AdManager] Mock AdMob SDK initialized');
-    console.log('[AdManager] Banner Ad Unit ID:', AD_UNIT_IDS.BANNER);
-    console.log('[AdManager] Interstitial Ad Unit ID:', AD_UNIT_IDS.INTERSTITIAL);
-  } catch (error) {
-    console.error('[AdManager] Failed to initialize ads:', error);
-  }
-};
-
-/**
- * Check if user should see ads
- * Only free users see ads, pro users see no ads
- */
-export const shouldShowAds = (): boolean => {
-  const {plan} = useUserStore.getState();
-  return plan === 'free';
-};
-
-/**
- * Get ad content rating for child safety
- */
-export const getAdContentRating = (): string => {
-  return adMobConfig.maxAdContentRating;
-};
-
-/**
- * Ad Manager class for managing ad state and interactions
- */
-export class AdManager {
-  private static instance: AdManager;
-  private isInterstitialLoaded = false;
+class AdManager {
   private faultViewCount = 0;
-  private readonly FAULT_VIEW_LIMIT = 5; // Show interstitial after 5 fault views
+  private isInitialized = false;
 
-  private constructor() {
-    this.setupInterstitialAd();
-  }
-
-  public static getInstance(): AdManager {
-    if (!AdManager.instance) {
-      AdManager.instance = new AdManager();
-    }
-    return AdManager.instance;
+  /**
+   * Check if ads should be shown for the current user
+   */
+  private shouldShowAds(): boolean {
+    const {plan} = useUserStore.getState();
+    return plan === 'free';
   }
 
   /**
-   * Setup interstitial ad with event listeners
+   * Initialize the ad system
+   * Should be called once when the app starts
    */
-  private async setupInterstitialAd(): Promise<void> {
-    if (!shouldShowAds()) {
-      return; // Don't load ads for pro users
-    }
-
-    try {
-      console.log('[AdManager] Setting up mock interstitial ad');
-      this.isInterstitialLoaded = true;
-    } catch (error) {
-      console.error('[AdManager] Failed to setup interstitial ad:', error);
-    }
-  }
-
-  /**
-   * Request a new interstitial ad
-   */
-  private async requestNewInterstitialAd(): Promise<void> {
-    if (!shouldShowAds()) {
-      return; // Don't load ads for pro users
-    }
-
-    try {
-      console.log('[AdManager] Requesting mock interstitial ad');
-      this.isInterstitialLoaded = true;
-    } catch (error) {
-      console.error('[AdManager] Failed to request interstitial ad:', error);
-    }
-  }
-
-  /**
-   * Show interstitial ad if conditions are met
-   * @param force - Force show ad regardless of view count
-   */
-  public async showInterstitialAd(force: boolean = false): Promise<void> {
-    if (!shouldShowAds()) {
-      return; // Don't show ads for pro users
-    }
-
-    if (!this.isInterstitialLoaded && !force) {
-      console.log('[AdManager] Interstitial ad not loaded yet');
+  async initializeAds(): Promise<void> {
+    if (this.isInitialized) {
       return;
     }
 
-    try {
-      console.log('[AdManager] Showing mock interstitial ad');
-      this.faultViewCount = 0; // Reset counter after showing ad
-      
-      // Simulate ad display time
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('[AdManager] Mock interstitial ad closed');
-      
-      // Request new ad for next time
-      await this.requestNewInterstitialAd();
-    } catch (error) {
-      console.error('[AdManager] Failed to show interstitial ad:', error);
+    if (Platform.OS === 'android') {
+      try {
+        await initStartIO(STARTIO_APP_ID);
+        this.isInitialized = true;
+        console.log('[AdManager] Ads initialized successfully');
+      } catch (error) {
+        console.error('[AdManager] Failed to initialize ads:', error);
+        // Continue without ads if initialization fails
+      }
+    } else {
+      // iOS: no-op implementation
+      console.log('[AdManager] iOS not supported, ads disabled');
+      this.isInitialized = true;
     }
   }
 
   /**
-   * Track fault view and show interstitial if limit reached
+   * Show an interstitial ad
+   * @param force - If true, show ad regardless of counter
    */
-  public trackFaultView(): void {
-    if (!shouldShowAds()) {
-      return; // Don't track for pro users
+  async showInterstitialAd(force = false): Promise<void> {
+    // Don't show ads for pro users
+    if (!this.shouldShowAds()) {
+      return;
+    }
+
+    if (Platform.OS === 'android' && this.isInitialized) {
+      try {
+        // Load the ad first
+        await loadInterstitial();
+        // Then show it
+        await showInterstitial();
+        console.log('[AdManager] Interstitial ad shown');
+      } catch (error) {
+        console.error('[AdManager] Failed to show interstitial ad:', error);
+        // Silently fail - don't interrupt user experience
+      }
+    } else if (Platform.OS === 'ios') {
+      // iOS: no-op
+      console.log('[AdManager] iOS not supported, skipping interstitial');
+    }
+  }
+
+  /**
+   * Track a fault view and show interstitial ad if needed
+   * This should be called whenever a user views a fault detail
+   */
+  async trackFaultView(): Promise<void> {
+    // Don't track for pro users
+    if (!this.shouldShowAds()) {
+      return;
     }
 
     this.faultViewCount++;
-    console.log(`[AdManager] Fault view count: ${this.faultViewCount}`);
 
-    if (this.faultViewCount >= this.FAULT_VIEW_LIMIT) {
-      this.showInterstitialAd();
+    // Show interstitial ad after every N views
+    if (this.faultViewCount >= INTERSTITIAL_AD_INTERVAL) {
+      this.faultViewCount = 0; // Reset counter
+      await this.showInterstitialAd();
     }
   }
 
   /**
-   * Show interstitial when user exceeds free limit
+   * Reset the fault view counter
+   * Useful for testing or when user upgrades to pro
    */
-  public showQuotaExceededAd(): void {
-    if (shouldShowAds()) {
-      this.showInterstitialAd(true);
-    }
-  }
-
-  /**
-   * Reset ad state (useful when user upgrades to pro)
-   */
-  public resetAdState(): void {
+  resetFaultViewCounter(): void {
     this.faultViewCount = 0;
-    this.isInterstitialLoaded = false;
   }
 
   /**
-   * Get current fault view count
+   * Get current fault view count (for debugging)
    */
-  public getFaultViewCount(): number {
+  getFaultViewCount(): number {
     return this.faultViewCount;
-  }
-
-  /**
-   * Check if interstitial is loaded
-   */
-  public isInterstitialReady(): boolean {
-    return this.isInterstitialLoaded;
   }
 }
 
 // Export singleton instance
-export const adManager = AdManager.getInstance();
+export const adManager = new AdManager();

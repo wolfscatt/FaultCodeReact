@@ -13,7 +13,7 @@ import ThemeProvider from './src/providers/ThemeProvider';
 import './src/i18n'; // Initialize i18n
 import {usePrefsStore} from './src/state/usePrefsStore';
 import {useUserStore} from './src/state/useUserStore';
-import {initializeAds} from './src/services/AdManager';
+import {adManager} from './src/services/AdManager';
 
 // Ignore specific warnings during development
 LogBox.ignoreLogs([
@@ -36,12 +36,10 @@ function App(): React.JSX.Element {
 
   // Initialize auth and ads on app start
   useEffect(() => {
-    const initializeApp = async () => {
-      await initialize();
-      await initializeAds();
-    };
-    
-    initializeApp();
+    initialize();
+    adManager.initializeAds().catch(error => {
+      console.error('Failed to initialize ads:', error);
+    });
   }, [initialize]);
 
   // Set status bar style based on theme

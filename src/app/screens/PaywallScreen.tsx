@@ -10,7 +10,6 @@ import {useTranslation} from 'react-i18next';
 import {useUserStore, useCanAccessContent} from '@state/useUserStore';
 import {colors, spacing, typography, borderRadius, shadows} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
-import {adManager} from '../../services/AdManager';
 
 type Props = RootStackScreenProps<'Paywall'>;
 
@@ -22,8 +21,6 @@ export default function PaywallScreen({navigation}: Props) {
   // Log paywall shown event on mount
   useEffect(() => {
     analytics.paywallShown('quota_exceeded', remaining);
-    // Show interstitial ad when user exceeds quota
-    adManager.showQuotaExceededAd();
   }, [remaining]);
 
   const handleSubscribe = () => {

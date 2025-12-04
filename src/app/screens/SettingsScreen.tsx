@@ -14,7 +14,6 @@ import {useUserStore} from '@state/useUserStore';
 import {useTheme} from '@theme/useTheme';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {getFormattedVersion} from '@utils/appVersion';
-import BannerAd from '@components/BannerAd';
 import i18n from '@i18n/index';
 import type {RootStackParamList} from '../navigation/types';
 
@@ -263,9 +262,6 @@ export default function SettingsScreen() {
           Boiler fault code assistant with AI
         </Text>
       </View>
-      
-      {/* Banner Ad for Free Users */}
-      <BannerAd style={styles.bannerAd} />
     </ScrollView>
   );
 }
@@ -306,14 +302,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.xl,
     marginTop: spacing.xl,
-  },
-  bannerAd: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#f0f0f0',
-    paddingVertical: spacing.sm,
   },
 });
 
