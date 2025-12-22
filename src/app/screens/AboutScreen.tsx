@@ -30,6 +30,7 @@ export default function AboutScreen() {
   const {colors: themedColors} = useTheme();
   const [appVersion, setAppVersion] = useState('0.1.0');
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [iconError, setIconError] = useState(false);
 
   useEffect(() => {
     // Get app version from native configuration
@@ -181,11 +182,21 @@ export default function AboutScreen() {
             dynamicStyles.appIconContainer,
             {opacity: fadeAnim}
           ]}>
-          <Image
-            source={require('../../../assets/app_icons/app_icon.png')}
-            style={[dynamicStyles.appIcon, dynamicStyles.appIconShadow]}
-            resizeMode="contain"
-          />
+          {!iconError ? (
+            <Image
+              source={require('../../../assets/app_icons/app_icon.png')}
+              style={[dynamicStyles.appIcon, dynamicStyles.appIconShadow]}
+              resizeMode="contain"
+              onError={() => {
+                console.log('App icon load error, showing fallback');
+                setIconError(true);
+              }}
+            />
+          ) : (
+            <View style={[dynamicStyles.appIcon, dynamicStyles.appIconShadow, {backgroundColor: colors.primary[100], alignItems: 'center', justifyContent: 'center'}]}>
+              <Text style={{fontSize: typography.sizes.xl, fontWeight: typography.weights.bold, color: colors.primary[600]}}>FC</Text>
+            </View>
+          )}
         </Animated.View>
 
         {/* App Info Card */}

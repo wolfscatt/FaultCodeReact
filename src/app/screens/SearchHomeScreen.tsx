@@ -20,7 +20,6 @@ import {getAllBrands} from '@data/repo/brandRepo';
 import {FaultCode, Brand} from '@data/types';
 import {debounce} from '@utils/index';
 import FaultCodeCard from '@components/FaultCodeCard';
-import AdBanner from '@components/AdBanner';
 import {colors, spacing, typography, borderRadius} from '@theme/tokens';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
@@ -267,7 +266,6 @@ export default function SearchHomeScreen({navigation}: Props) {
         )}
         contentContainerStyle={staticStyles.listContent}
         ListEmptyComponent={renderEmptyState}
-        ListFooterComponent={<AdBanner />}
       />
     </View>
   );

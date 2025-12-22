@@ -114,9 +114,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    // Start.io (StartApp) SDK for ads
-    implementation "com.startapp:inapp-sdk:5.+"
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

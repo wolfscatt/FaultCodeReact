@@ -27,7 +27,6 @@ import {useTheme} from '@theme/useTheme';
 import {formatDate} from '@utils/index';
 import {analytics} from '@state/useAnalyticsStore';
 import {usePrefsStore} from '@state/usePrefsStore';
-import {adManager} from '@services/AdManager';
 
 type Props = SearchStackScreenProps<'FaultDetail'>;
 
@@ -80,9 +79,6 @@ export default function FaultDetailScreen({route, navigation}: Props) {
             result.fault.severity,
           );
         }
-
-        // Track fault view for ad display
-        await adManager.trackFaultView();
       } catch (error) {
         console.error('Failed to load fault:', error);
       } finally {
