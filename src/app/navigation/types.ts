@@ -21,14 +21,22 @@ export type RootStackParamList = {
 
 // Main Bottom Tabs
 export type MainTabsParamList = {
-  SearchTab: undefined;
+  HomeTab: undefined;
   FavoritesTab: undefined;
   SettingsTab: undefined;
 };
 
 // Search Stack
 export type SearchStackParamList = {
+  Home: undefined;
   SearchHome: undefined;
+  BrandModels: {brandId: string; brandName: string};
+  BrandFaults: {
+    brandId: string;
+    brandName: string;
+    modelId?: string;
+    modelName?: string;
+  };
   FaultDetail: {faultId: string};
 };
 

@@ -19,6 +19,8 @@ import {SearchStackScreenProps} from '../navigation/types';
 import {useTranslation} from 'react-i18next';
 import {getFaultById} from '@data/repo/faultRepo';
 import {FaultDetailResult} from '@data/types';
+import {getBrandById} from '@data/repo/brandRepo';
+import {getModelById} from '@data/repo/modelRepo';
 import {useUserStore, useCanAccessContent} from '@state/useUserStore';
 import {addFavorite, removeFavorite, isFavorited} from '@data/repo/favoritesRepo';
 import PaywallModal from '@components/PaywallModal';
@@ -36,6 +38,8 @@ export default function FaultDetailScreen({route, navigation}: Props) {
   const language = usePrefsStore(state => state.language);
   const {colors: themedColors} = useTheme();
   const [data, setData] = useState<FaultDetailResult | null>(null);
+  const [brandName, setBrandName] = useState<string | null>(null);
+  const [modelName, setModelName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -63,6 +67,27 @@ export default function FaultDetailScreen({route, navigation}: Props) {
       try {
         const result = await getFaultById(faultId);
         setData(result);
+
+        if (result?.fault) {
+          // Load brand / model names for display
+          try {
+            const brand = await getBrandById(result.fault.brandId);
+            setBrandName(brand?.name ?? null);
+          } catch (e) {
+            console.log('Failed to load brand name for fault detail:', e);
+          }
+
+          if (result.fault.boilerModelId) {
+            try {
+              const model = await getModelById(result.fault.boilerModelId);
+              setModelName(model?.modelName ?? null);
+            } catch (e) {
+              console.log('Failed to load model name for fault detail:', e);
+            }
+          } else {
+            setModelName(null);
+          }
+        }
         
         // Check if fault is favorited (for logged-in users)
         if (userId) {
@@ -158,6 +183,11 @@ export default function FaultDetailScreen({route, navigation}: Props) {
       fontWeight: typography.weights.semibold,
       color: '#ffffff',
       textTransform: 'uppercase',
+    },
+    brandModelText: {
+      fontSize: typography.sizes.sm,
+      color: themedColors.textSecondary,
+      marginBottom: spacing.xs,
     },
     title: {
       fontSize: typography.sizes.xl,
@@ -487,6 +517,12 @@ export default function FaultDetailScreen({route, navigation}: Props) {
             </Text>
           </View>
         </View>
+        {brandName && (
+          <Text style={styles.brandModelText}>
+            {brandName}
+            {modelName ? ` • ${modelName}` : ''}
+          </Text>
+        )}
         <Text style={styles.title}>{fault.title}</Text>
         {fault.lastVerifiedAt && (
           <Text style={styles.verifiedDate}>

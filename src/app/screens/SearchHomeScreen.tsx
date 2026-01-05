@@ -12,6 +12,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Modal,
+  Pressable,
 } from 'react-native';
 import {SearchStackScreenProps} from '../navigation/types';
 import {useTranslation} from 'react-i18next';
@@ -120,9 +122,11 @@ export default function SearchHomeScreen({navigation}: Props) {
     },
     brandPicker: {
       backgroundColor: themedColors.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: themedColors.border,
-      maxHeight: 300,
+      borderRadius: borderRadius.lg,
+      maxHeight: 320,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: themedColors.border,
     },
     brandOption: {
       padding: spacing.md,
@@ -154,6 +158,16 @@ export default function SearchHomeScreen({navigation}: Props) {
       color: themedColors.textSecondary,
       textAlign: 'center',
     },
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.35)',
+      justifyContent: 'flex-start',
+      paddingTop: 140,
+      paddingHorizontal: spacing.lg,
+    },
+    modalContent: {
+      alignItems: 'stretch',
+    },
   });
 
   const staticStyles = StyleSheet.create({
@@ -176,27 +190,37 @@ export default function SearchHomeScreen({navigation}: Props) {
     if (!showBrandPicker) return null;
 
     return (
-      <View style={dynamicStyles.brandPicker}>
-        <TouchableOpacity
-          style={dynamicStyles.brandOption}
-          onPress={() => {
-            setSelectedBrand(undefined);
-            setShowBrandPicker(false);
-          }}>
-          <Text style={dynamicStyles.brandOptionText}>{t('search.allBrands')}</Text>
-        </TouchableOpacity>
-        {brands.map(brand => (
-          <TouchableOpacity
-            key={brand.id}
-            style={dynamicStyles.brandOption}
-            onPress={() => {
-              setSelectedBrand(brand.id);
-              setShowBrandPicker(false);
-            }}>
-            <Text style={dynamicStyles.brandOptionText}>{brand.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <Modal visible transparent animationType="fade">
+        <Pressable
+          style={dynamicStyles.modalBackdrop}
+          onPress={() => setShowBrandPicker(false)}>
+          <View style={dynamicStyles.modalContent}>
+            <View style={dynamicStyles.brandPicker}>
+              <TouchableOpacity
+                style={dynamicStyles.brandOption}
+                onPress={() => {
+                  setSelectedBrand(undefined);
+                  setShowBrandPicker(false);
+                }}>
+                <Text style={dynamicStyles.brandOptionText}>
+                  {t('search.allBrands')}
+                </Text>
+              </TouchableOpacity>
+              {brands.map(brand => (
+                <TouchableOpacity
+                  key={brand.id}
+                  style={dynamicStyles.brandOption}
+                  onPress={() => {
+                    setSelectedBrand(brand.id);
+                    setShowBrandPicker(false);
+                  }}>
+                  <Text style={dynamicStyles.brandOptionText}>{brand.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     );
   };
 

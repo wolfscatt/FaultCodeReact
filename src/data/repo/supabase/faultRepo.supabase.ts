@@ -18,6 +18,7 @@ import * as mockFaultRepo from '../faultRepo.mock';
 type SupabaseFaultCode = {
   id: string;
   brand_id: string;
+  boiler_model_id?: string | null;
   code: string;
   title: {en: string; tr: string};
   severity: SeverityLevel;
@@ -48,6 +49,7 @@ function convertSupabaseFault(sf: SupabaseFaultCode, language: 'en' | 'tr'): Fau
   return {
     id: sf.id,
     brandId: sf.brand_id,
+    boilerModelId: sf.boiler_model_id || undefined,
     code: sf.code,
     title: sf.title[language] || sf.title.en,
     severity: sf.severity,
@@ -92,11 +94,14 @@ export async function searchFaults(filters: SearchFilters): Promise<FaultCode[]>
     // Execute query
     const {data, error} = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase fault search error:', error);
+      throw error;
+    }
 
+    // Empty result is valid - return empty array, don't fallback to mock
     if (!data || data.length === 0) {
-      console.warn('No faults found in Supabase, falling back to mock data');
-      return mockFaultRepo.searchFaults(filters);
+      return [];
     }
 
     // Convert to app FaultCode type
@@ -142,8 +147,13 @@ export async function searchFaults(filters: SearchFilters): Promise<FaultCode[]>
 
     return results;
   } catch (error) {
-    console.warn('Supabase fault search failed, using mock data:', error);
-    return mockFaultRepo.searchFaults(filters);
+    // Only fallback to mock on actual connection/query errors
+    // Log the error for debugging
+    console.error('Supabase fault search failed:', error);
+    
+    // Re-throw the error so the app can handle it appropriately
+    // In production, you might want to show an error message to the user
+    throw error;
   }
 }
 
@@ -161,11 +171,14 @@ export async function getFaultById(id: string): Promise<FaultDetailResult | null
       .eq('id', id)
       .single();
 
-    if (faultError) throw faultError;
+    if (faultError) {
+      console.error('Supabase getFaultById error:', faultError);
+      throw faultError;
+    }
 
+    // Not found is valid - return null, don't fallback to mock
     if (!faultData) {
-      console.warn(`Fault ${id} not found in Supabase, falling back to mock data`);
-      return mockFaultRepo.getFaultById(id);
+      return null;
     }
 
     // Fetch resolution steps
@@ -185,8 +198,9 @@ export async function getFaultById(id: string): Promise<FaultDetailResult | null
 
     return {fault, steps};
   } catch (error) {
-    console.warn('Supabase getFaultById failed, using mock data:', error);
-    return mockFaultRepo.getFaultById(id);
+    // Only log actual errors, don't fallback to mock
+    console.error('Supabase getFaultById failed:', error);
+    throw error;
   }
 }
 
@@ -203,17 +217,20 @@ export async function getRecentFaults(limit: number = 10): Promise<FaultCode[]> 
       .order('last_verified_at', {ascending: false, nullsLast: true})
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase getRecentFaults error:', error);
+      throw error;
+    }
 
+    // Empty result is valid - return empty array
     if (!data || data.length === 0) {
-      console.warn('No recent faults found in Supabase, falling back to mock data');
-      return mockFaultRepo.getRecentFaults(limit);
+      return [];
     }
 
     return data.map((sf: SupabaseFaultCode) => convertSupabaseFault(sf, language));
   } catch (error) {
-    console.warn('Supabase getRecentFaults failed, using mock data:', error);
-    return mockFaultRepo.getRecentFaults(limit);
+    console.error('Supabase getRecentFaults failed:', error);
+    throw error;
   }
 }
 

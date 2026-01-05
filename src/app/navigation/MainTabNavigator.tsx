@@ -18,10 +18,10 @@ import Svg, {Path} from 'react-native-svg';
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
 // Modern outline icons
-const SearchIcon = ({color, size = 24}: {color: string; size?: number}) => (
+const HomeIcon = ({color, size = 24}: {color: string; size?: number}) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
-      d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z"
+      d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H15C14.4477 21 14 20.5523 14 20V15C14 14.4477 13.5523 14 13 14H11C10.4477 14 10 14.4477 10 15V20C10 20.5523 9.55228 21 9 21H4C3.44772 21 3 20.5523 3 20V10.5Z"
       stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
@@ -112,12 +112,12 @@ export default function MainTabNavigator() {
         },
       }}>
       <Tab.Screen
-        name="SearchTab"
+        name="HomeTab"
         component={SearchStackNavigator}
         options={{
-          tabBarLabel: t('navigation.search'),
+          tabBarLabel: t('navigation.home', 'Home'),
           tabBarIcon: ({color, focused}) => (
-            <SearchIcon color={color} size={focused ? 24 : 22} />
+            <HomeIcon color={color} size={focused ? 24 : 22} />
           ),
         }}
       />

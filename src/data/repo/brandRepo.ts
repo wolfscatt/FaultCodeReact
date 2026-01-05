@@ -21,14 +21,39 @@ try {
   const env = require('@env');
   SUPABASE_URL = env.SUPABASE_URL || '';
   SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
-} catch {
-  // Env vars not available (likely in tests), use mock data
+  
+  // Debug logging
+  console.log('[BrandRepo] Environment check:', {
+    SUPABASE_URL: SUPABASE_URL ? 'SET' : 'NOT SET',
+    SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
+  });
+} catch (error) {
+  console.log('[BrandRepo] Environment import failed:', error);
+  
+  // FALLBACK: Try direct environment variable access
+  try {
+    SUPABASE_URL = process.env.SUPABASE_URL || '';
+    SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+    console.log('[BrandRepo] Fallback environment check:', {
+      SUPABASE_URL: SUPABASE_URL ? 'SET' : 'NOT SET',
+      SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
+    });
+  } catch (fallbackError) {
+    console.log('[BrandRepo] Fallback environment access failed:', fallbackError);
+  }
 }
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+console.log('[BrandRepo] Using Supabase:', USE_SUPABASE);
+
+// TEMPORARY FIX: Force Supabase usage if environment variables are not loading
+// Remove this after confirming environment variables work
+const FORCE_SUPABASE = true;
+const finalUseSupabase = USE_SUPABASE || FORCE_SUPABASE;
+console.log('[BrandRepo] Final decision - Using Supabase:', finalUseSupabase);
 
 // Select appropriate repository based on configuration
-const brandRepo = USE_SUPABASE ? supabaseBrandRepo : mockBrandRepo;
+const brandRepo = finalUseSupabase ? supabaseBrandRepo : mockBrandRepo;
 
 /**
  * Searches brands by name or alias

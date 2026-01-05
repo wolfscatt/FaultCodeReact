@@ -49,11 +49,14 @@ export async function searchBrands(query: string): Promise<Brand[]> {
       .select('*')
       .order('name->en', {ascending: true});
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase brand search error:', error);
+      throw error;
+    }
 
+    // Empty result is valid - return empty array, don't fallback to mock
     if (!data || data.length === 0) {
-      console.warn('No brands found in Supabase, falling back to mock data');
-      return mockBrandRepo.searchBrands(query);
+      return [];
     }
 
     // Convert to app Brand type
@@ -73,8 +76,8 @@ export async function searchBrands(query: string): Promise<Brand[]> {
 
     return brands;
   } catch (error) {
-    console.warn('Supabase brand search failed, using mock data:', error);
-    return mockBrandRepo.searchBrands(query);
+    console.error('Supabase brand search failed:', error);
+    throw error;
   }
 }
 
@@ -91,17 +94,20 @@ export async function getBrandById(id: string): Promise<Brand | null> {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase getBrandById error:', error);
+      throw error;
+    }
 
+    // Not found is valid - return null, don't fallback to mock
     if (!data) {
-      console.warn(`Brand ${id} not found in Supabase, falling back to mock data`);
-      return mockBrandRepo.getBrandById(id);
+      return null;
     }
 
     return convertSupabaseBrand(data as SupabaseBrand, language);
   } catch (error) {
-    console.warn('Supabase getBrandById failed, using mock data:', error);
-    return mockBrandRepo.getBrandById(id);
+    console.error('Supabase getBrandById failed:', error);
+    throw error;
   }
 }
 
@@ -117,17 +123,20 @@ export async function getAllBrands(): Promise<Brand[]> {
       .select('*')
       .order('name->en', {ascending: true});
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase getAllBrands error:', error);
+      throw error;
+    }
 
+    // Empty result is valid - return empty array, don't fallback to mock
     if (!data || data.length === 0) {
-      console.warn('No brands found in Supabase, falling back to mock data');
-      return mockBrandRepo.getAllBrands();
+      return [];
     }
 
     return data.map((sb: SupabaseBrand) => convertSupabaseBrand(sb, language));
   } catch (error) {
-    console.warn('Supabase getAllBrands failed, using mock data:', error);
-    return mockBrandRepo.getAllBrands();
+    console.error('Supabase getAllBrands failed:', error);
+    throw error;
   }
 }
 
